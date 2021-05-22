@@ -10,6 +10,14 @@ class DB:
         self.connection = None
         self.cursor = None
 
+    def require_connection(self, func):
+        def wrapper():
+            self.get_cursor()
+            func()
+            self.close_connection()
+
+        return wrapper
+
     def connect(self):
         # TODO: add an try-except block
         self.connection = sqlite3.connect(self.db_name)
