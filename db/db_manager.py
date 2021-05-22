@@ -83,6 +83,7 @@ class DB:
         else:
             self.save_profile_metadata(profile_object)
 
+        profile_object.id = self.cursor.lastrowid
         for entry in profile_object.entries:
             if entry.id is not None:
                 self.update_profile_entry(entry)
@@ -141,7 +142,6 @@ class DB:
         self.connection.commit()
         self.close_connection()
 
-    @require_connection
     def delete_profile(self, profile_object):
         """
         Deletes a row in ProfileMeta with profile_object.id and all associated profile entries.
@@ -153,7 +153,6 @@ class DB:
         self.connection.commit()
         self.close_connection()
 
-    @require_connection
     def get_profile_list(self):
         """
         Selects all profile metas from a database.
@@ -162,16 +161,32 @@ class DB:
         self.get_cursor()
         self.cursor.execute('SELECT * FROM ProfileMeta')
         raw_profile_list = self.cursor.fetchall()
-        for entry in raw_profile_list:
-            # TODO: finish when debugging
-            pass
+        self.close_connection()
 
-    @require_connection
+        profile_list = []
+        for entry in raw_profile_list:
+            profile_obj = Profile(entry[1], id=entry[0])
+            profile_obj.entries = self.get_profile_entries(profile_obj)
+            profile_list.append(profile_obj)
+
+        return profile_list
+
     def get_profile_entries(self, profile_obj):
         """
         Selects all entries of a given profile.
         :param profile_obj: instance of Profile
         :return: Profile object with entries inside
         """
-        self.cursor.execute('SELECT * FROM ProfilesEntries WHERE profile_id = ?', (profile_obj.id, ))
-        # TODO: finish when debugging
+        self.get_cursor()
+        self.cursor.execute('SELECT * FROM ProfileEntries WHERE profile_id = ?', (profile_obj.id, ))
+        raw_entries_list = self.cursor.fetchall()
+
+        entries_list = []
+        for raw_entry in raw_entries_list:
+            entry = ProfileEntry(raw_entry[1], raw_entry[3], executable_path=raw_entry[2], id=raw_entry[0])
+            entries_list.append(entry)
+
+        self.connection.commit()
+        self.close_connection()
+
+        return entries_list
