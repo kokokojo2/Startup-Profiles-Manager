@@ -1,5 +1,6 @@
 import sqlite3
 from sqlite3 import Error
+from base.classes import Profile, ProfileEntry
 
 
 class DB:
@@ -34,14 +35,14 @@ class DB:
     @require_connection
     def create_default_structure(self):
 
-        self.cursor.executemany(
+        self.cursor.executescript(
             '''
-            CREATE TABLE ProfileMeta (
+            CREATE TABLE IF NOT EXISTS ProfileMeta (
                 profile_id INTEGER PRIMARY KEY,
                 profile_name VARCHAR(64)  
             );
             
-            CREATE TABLE ProfileEntries(
+            CREATE TABLE IF NOT EXISTS ProfileEntries(
                 entry_id INTEGER PRIMARY KEY,
                 entry_name VARCHAR(128),
                 executable_path TEXT,
@@ -147,7 +148,8 @@ class DB:
         Selects all profile metas from a database.
         :return: list of profiles
         """
-        self.cursor.execute('SELECT * FROM Profiles')
+        self.get_cursor()
+        self.cursor.execute('SELECT * FROM ProfileMeta')
         raw_profile_list = self.cursor.fetchall()
         for entry in raw_profile_list:
             # TODO: finish when debugging
