@@ -32,8 +32,8 @@ class DB:
             # TODO: add logs here
             pass
 
-    @require_connection
     def create_default_structure(self):
+        self.get_cursor()
 
         self.cursor.executescript(
             '''
@@ -56,18 +56,20 @@ class DB:
             );
             '''
         )
+        self.connection.commit()
+        self.close_connection()
 
-    @require_connection
     def drop(self):
-
-        self.cursor.executemany(
+        self.get_cursor()
+        self.cursor.executescript(
             '''
             DROP TABLE ProfileMeta;
             DROP TABLE ProfileEntries;
             '''
         )
+        self.connection.commit()
+        self.close_connection()
 
-    @require_connection
     def save_profile(self, profile_object):
         """
         Serializes profile obj with all entries and metadata to a database.
@@ -75,6 +77,7 @@ class DB:
         :param profile_object: Profile instance
         :return:
         """
+        self.get_cursor()
         if profile_object.id is not None:
             self.update_profile_metadata(profile_object)
         else:
@@ -85,6 +88,9 @@ class DB:
                 self.update_profile_entry(entry)
             else:
                 self.save_profile_entry(entry, profile_object)
+
+        self.connection.commit()
+        self.close_connection()
 
     def save_profile_metadata(self, profile_object):
         """
@@ -124,14 +130,16 @@ class DB:
         self.cursor.execute('UPDATE ProfileEntries SET entry_name=?, executable_path=?,  priority=? WHERE entry_id = ?',
                             (profile_entry.name, profile_entry.executable_path, profile_entry.priority, profile_entry.id))
 
-    @require_connection
     def delete_profile_entry(self, profile_entry):
         """
         Deletes given profile entry.
         :param profile_entry: instance of ProfileEntry class with info about entry
         :return:
         """
+        self.get_cursor()
         self.cursor.execute('DELETE FROM ProfileEntries WHERE entry_id = ?', (profile_entry.id, ))
+        self.connection.commit()
+        self.close_connection()
 
     @require_connection
     def delete_profile(self, profile_object):
@@ -140,7 +148,10 @@ class DB:
         :param profile_object: Profile instance
         :return:
         """
+        self.get_cursor()
         self.cursor.execute('DELETE FROM ProfileMeta WHERE profile_id = ?', (profile_object.id, ))
+        self.connection.commit()
+        self.close_connection()
 
     @require_connection
     def get_profile_list(self):
