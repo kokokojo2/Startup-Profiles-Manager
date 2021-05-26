@@ -221,8 +221,3 @@ class DB:
         self.close_connection()
 
         return entries_list
-
-
-if __name__ == '__main__':
-    d1 = DB('fdfs.sqlite3')
-    d1.create_default_structure()
