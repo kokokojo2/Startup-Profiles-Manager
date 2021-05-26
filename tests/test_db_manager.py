@@ -12,7 +12,6 @@ class TestDBManager(unittest.TestCase):
 
     def tearDown(self):
         self.db_manager.drop()
-        pass
 
     def test_save_profile(self):
         pr1 = Profile('Work',
