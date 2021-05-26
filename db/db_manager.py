@@ -1,6 +1,13 @@
 import sqlite3
-from sqlite3 import Error
+import logging
+
 from base.classes import Profile, ProfileEntry
+
+# logging constants
+logger_name = 'Database manager'
+log_file_name = 'main_log.log'  # TODO: should be moved to a global config
+log_file_format = '%(asctime)s - %(name)s:%(levelname)s: in %(funcName)s: %(message)s'
+log_console_format = '%(asctime)s - %(name)s:%(levelname)s: %(message)s'
 
 
 class DB:
@@ -10,13 +17,20 @@ class DB:
         self.connection = None
         self.cursor = None
 
-    def require_connection(self, func):
-        def wrapper():
-            self.get_cursor()
-            func()
-            self.close_connection()
+        self.logger = logging.getLogger(logger_name)
+        log_file = logging.FileHandler(log_file_name)
+        error_stream = logging.StreamHandler()
 
-        return wrapper
+        log_file.setLevel(logging.INFO)
+        log_file.setFormatter(logging.Formatter(log_file_format))
+
+        error_stream.setLevel(logging.WARNING)
+        error_stream.setFormatter(logging.Formatter(log_console_format))
+
+        self.logger.addHandler(log_file)
+        self.logger.addHandler(error_stream)
+
+        self.logger.setLevel(logging.DEBUG)
 
     def connect(self):
         # TODO: add an try-except block
@@ -30,15 +44,13 @@ class DB:
 
         try:
             self.cursor.close()
-        except AttributeError:
-            # TODO: add logs here
-            pass
+        except AttributeError or sqlite3.ProgrammingError:
+            self.logger.warning('Trying to close cursor that does not exist.', exc_info=True)
 
         try:
             self.connection.close()
-        except AttributeError:
-            # TODO: add logs here
-            pass
+        except AttributeError or sqlite3.ProgrammingError:
+            self.logger.warning('Trying to close cursor that does not exist.', exc_info=True)
 
     def create_default_structure(self):
         self.get_cursor()
@@ -65,6 +77,8 @@ class DB:
             '''
         )
         self.connection.commit()
+
+        self.logger.info('Default sql structure is created.')
         self.close_connection()
 
     def drop(self):
@@ -76,6 +90,7 @@ class DB:
             '''
         )
         self.connection.commit()
+        self.logger.info('Dropped all tables.')
         self.close_connection()
 
     def save_profile(self, profile_object):
@@ -87,18 +102,23 @@ class DB:
         """
         self.get_cursor()
         if profile_object.id is not None:
+            self.logger.info(f'Updating profile with name - {profile_object.name} and id - {profile_object.id}.')
             self.update_profile_metadata(profile_object)
         else:
+            self.logger.info(f'Updating profile with name - {profile_object.name}.')
             self.save_profile_metadata(profile_object)
 
         profile_object.id = self.cursor.lastrowid
         for entry in profile_object.entries:
             if entry.id is not None:
+                self.logger.info(f'Updating profile entry with name - {entry.name} of {profile_object.name} profile.')
                 self.update_profile_entry(entry)
             else:
+                self.logger.info(f'Saving profile entry with name - {entry.name} of {profile_object.name} profile.')
                 self.save_profile_entry(entry, profile_object)
 
         self.connection.commit()
+        self.logger.info(f'Profile with name - {profile_object.name} is successfully saved.')
         self.close_connection()
 
     def save_profile_metadata(self, profile_object):
@@ -157,6 +177,7 @@ class DB:
         :return:
         """
         self.get_cursor()
+        self.logger.info(f'Deleting profile with name - {profile_object.name} and id - {profile_object.id}.')
         self.cursor.execute('DELETE FROM ProfileMeta WHERE profile_id = ?', (profile_object.id, ))
         self.connection.commit()
         self.close_connection()
@@ -167,6 +188,7 @@ class DB:
         :return: list of profiles
         """
         self.get_cursor()
+        self.logger.info('Getting a list of profiles.')
         self.cursor.execute('SELECT * FROM ProfileMeta')
         raw_profile_list = self.cursor.fetchall()
         self.close_connection()
@@ -186,6 +208,7 @@ class DB:
         :return: Profile object with entries inside
         """
         self.get_cursor()
+        self.logger.info(f'Getting profile entries of {profile_obj.name} profile.')
         self.cursor.execute('SELECT * FROM ProfileEntries WHERE profile_id = ?', (profile_obj.id, ))
         raw_entries_list = self.cursor.fetchall()
 
@@ -198,3 +221,8 @@ class DB:
         self.close_connection()
 
         return entries_list
+
+
+if __name__ == '__main__':
+    d1 = DB('fdfs.sqlite3')
+    d1.create_default_structure()
