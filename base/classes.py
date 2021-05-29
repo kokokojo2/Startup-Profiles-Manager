@@ -11,6 +11,7 @@ class ProfileEntry:
     priority: int
     executable_path: str = None
     id: int = None
+    disabled: bool = False
 
 
 @dataclass
