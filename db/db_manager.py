@@ -1,13 +1,8 @@
 import sqlite3
 import logging
 
+import config
 from base.classes import Profile, ProfileEntry
-
-# logging constants
-logger_name = 'Database manager'
-log_file_name = 'main_log.log'  # TODO: should be moved to a global config
-log_file_format = '%(asctime)s - %(name)s:%(levelname)s: in %(funcName)s: %(message)s'
-log_console_format = '%(asctime)s - %(name)s:%(levelname)s: %(message)s'
 
 
 class DB:
@@ -17,15 +12,15 @@ class DB:
         self.connection = None
         self.cursor = None
 
-        self.logger = logging.getLogger(logger_name)
-        log_file = logging.FileHandler(log_file_name)
+        self.logger = logging.getLogger(config.DB_LOGGER_NAME)
+        log_file = logging.FileHandler(config.MAIN_LOG_PATH)
         error_stream = logging.StreamHandler()
 
         log_file.setLevel(logging.INFO)
-        log_file.setFormatter(logging.Formatter(log_file_format))
+        log_file.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_FILE))
 
         error_stream.setLevel(logging.WARNING)
-        error_stream.setFormatter(logging.Formatter(log_console_format))
+        error_stream.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_CONSOLE))
 
         self.logger.addHandler(log_file)
         self.logger.addHandler(error_stream)

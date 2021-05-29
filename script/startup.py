@@ -1,12 +1,7 @@
 from subprocess import Popen
 import logging
 
-# logging constants
-# TODO: should be moved to a global config file
-logger_name = 'Startup scripts'
-log_file_name = 'main_log.log'
-log_file_format = '%(asctime)s - %(name)s:%(levelname)s: in %(funcName)s: %(message)s'
-log_console_format = '%(asctime)s - %(name)s:%(levelname)s: %(message)s'
+import config
 
 
 # a singleton class
@@ -19,15 +14,15 @@ class StartupManager:
         return cls.instance
 
     def __init__(self):
-        self.logger = logging.getLogger(logger_name)
-        log_file = logging.FileHandler(log_file_name)
+        self.logger = logging.getLogger(config.STARTUP_LOGGER_NAME)
+        log_file = logging.FileHandler(config.MAIN_LOG_PATH)
         error_stream = logging.StreamHandler()
 
         log_file.setLevel(logging.INFO)
-        log_file.setFormatter(logging.Formatter(log_file_format))
+        log_file.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_FILE))
 
         error_stream.setLevel(logging.WARNING)
-        error_stream.setFormatter(logging.Formatter(log_console_format))
+        error_stream.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_CONSOLE))
 
         self.logger.addHandler(log_file)
         self.logger.addHandler(error_stream)
