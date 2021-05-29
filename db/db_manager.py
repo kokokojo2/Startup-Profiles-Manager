@@ -2,7 +2,7 @@ import sqlite3
 import logging
 
 import config
-from base.classes import Profile, ProfileEntry
+from base.data_classes import Profile, ProfileEntry
 
 
 class DB:

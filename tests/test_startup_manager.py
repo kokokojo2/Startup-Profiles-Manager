@@ -1,6 +1,6 @@
 import unittest
 from script.startup import StartupManager
-from base.classes import Profile, ProfileEntry
+from base.data_classes import Profile, ProfileEntry
 
 
 class MyTestCase(unittest.TestCase):

@@ -1,7 +1,7 @@
 import unittest
 
 from db.db_manager import DB
-from base.classes import Profile, ProfileEntry
+from base.data_classes import Profile, ProfileEntry
 
 
 class TestDBManager(unittest.TestCase):
