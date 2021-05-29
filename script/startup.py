@@ -1,5 +1,4 @@
 from subprocess import Popen
-from base.classes import ProfileEntry
 import logging
 
 # logging constants
@@ -41,7 +40,7 @@ class StartupManager:
         :param profile_entry: Instance of ProfileEntry class
         :return: True if file is launched successfully
         """
-        self.logger.info(f'Trying to run executable from location - {profile_entry.executable_path}')
+        self.logger.info(f'Trying to run executable from location - "{profile_entry.executable_path}"')
 
         try:
             result = Popen(profile_entry.executable_path)
@@ -50,10 +49,11 @@ class StartupManager:
         except (FileNotFoundError, OSError) as e:
 
             if isinstance(e, FileNotFoundError):
-                self.logger.warning(f'The application with name {profile_entry.name} has not been found at location {profile_entry.executable_path}. Please, update path in profile settings.')
+                self.logger.warning(f'The application with name "{profile_entry.name}" has not been found at location "{profile_entry.executable_path}". Please, update path in profile settings.')
 
-            if isinstance(e, OSError):
-                self.logger.warning(f'Oops, something went wrong with provided app. Check if the file on a specified location is an executable file.')
+            # the FileNotFoundError is a subclass of OSError
+            if isinstance(e, OSError) and not isinstance(e, FileNotFoundError):
+                self.logger.warning(f'Oops, something went wrong with the application with name "{profile_entry.name}". Check if the file on a specified location is an executable file.')
 
             return False
 
@@ -64,14 +64,16 @@ class StartupManager:
         :return: Number of success launches (for testing purposes).
         """
         self.logger.info('Launching profile...')
+
         num_of_success_runs = 0
+        profile_obj.entries.sort(key=lambda x: x.priority)
 
         for entry in profile_obj.entries:
-            if not entry.disabled:
-                if self.run_executable_from_path(profile_obj):
+            if not entry.disabled and entry.executable_path is not None:
+                if self.run_executable_from_path(entry):
                     num_of_success_runs += 1
 
             else:
-                self.logger.info(f'The profile entry with name - {entry.name} is disabled.')
+                self.logger.info(f'The profile entry with name "{entry.name}" is disabled.')
 
         return num_of_success_runs
