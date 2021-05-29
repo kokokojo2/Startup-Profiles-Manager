@@ -5,10 +5,16 @@ import config
 from base.data_classes import Profile, ProfileEntry
 
 
+# singleton class
 class DB:
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(DB, cls).__new__(cls)
 
-    def __init__(self, db_name=None):
-        self.db_name = db_name
+        return cls.instance
+
+    def __init__(self):
+        self.db_name = config.DATABASE_FILENAME
         self.connection = None
         self.cursor = None
 
@@ -179,7 +185,7 @@ class DB:
 
     def get_profile_list(self):
         """
-        Selects all profile metas from a database.
+        Selects all profiles from a database.
         :return: list of profiles
         """
         self.get_cursor()
