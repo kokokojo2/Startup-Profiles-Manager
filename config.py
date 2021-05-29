@@ -19,3 +19,6 @@ STARTUP_LOGGER_NAME = 'Startup scripts'
 MAIN_LOG_PATH = os.path.join(LOGS_DIR, MAIN_LOG_FILENAME)
 
 
+# Database configuration
+
+DATABASE_FILENAME = 'db' + 'sqlite3'
