@@ -32,7 +32,7 @@ class Validator:
 
     def bool_validate_name(self, name):
         if len(name) > 64:
-            self.logger.warning(f'Name should be less then 64 characters, but input contains {len(name)} characters.')
+            self.logger.warning(f'Name should be less then 64 characters long, but input contains {len(name)} characters.')
             return False
 
         if len(name) == 0:
@@ -42,8 +42,10 @@ class Validator:
         return True
 
     def bool_validate_path(self, path):
+        self.logger.info(f'Trying to validate path "{path}"')
 
         if not os.path.exists(path):
+            print(path)
             self.logger.warning('Entered path does not exist.')
             return False
 
@@ -67,12 +69,17 @@ class Validator:
             return None
 
         if path.endswith('.exe'):
+            self.logger.info('Path validated successfully.')
             return path
 
         if path.endswith('.lnk'):
+            self.logger.info('A shortcut has been detected.Trying to get target path...')
+
             try:
                 shell = win_client.Dispatch('WScript.Shell')
                 link = shell.CreateShortCut(path)
+                self.logger.info('Target path captured. Validation completed.')
+
                 return link.Targetpath
             except Exception:
                 self.logger.warning('Unknown error occur while trying to get target of a windows shortcut file. '
