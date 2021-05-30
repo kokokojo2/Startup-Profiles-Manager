@@ -103,7 +103,7 @@ class DB:
         self.get_cursor()
         if profile_object.id is not None:
             self.logger.info(f'Updating profile with name - {profile_object.name} and id - {profile_object.id}.')
-            self.update_profile_metadata(profile_object)
+            self.__update_profile_metadata(profile_object)
         else:
             self.logger.info(f'Updating profile with name - {profile_object.name}.')
             self.save_profile_metadata(profile_object)
@@ -131,7 +131,7 @@ class DB:
         self.cursor.execute('INSERT INTO ProfileMeta (profile_name) VALUES(?)',
                             (profile_object.name, ))
 
-    def update_profile_metadata(self, profile_object):
+    def __update_profile_metadata(self, profile_object):
         """
         Updates a row in ProfileMeta with profile_object.id. Should be used only if object exists in a database.
         :param profile_object: Profile instance
@@ -139,6 +139,19 @@ class DB:
         """
         self.cursor.execute('UPDATE ProfileMeta SET profile_name = ? WHERE profile_id = ?',
                             (profile_object.name, profile_object.id))
+
+    def update_profile_metadata(self, profile_object):
+        """
+        Updates a row in ProfileMeta with profile_object.id. Should be used only if object exists in a database.
+        Establish connection automatically.
+        :param profile_object: Profile instance
+        :return:
+        """
+        self.get_cursor()
+        self.cursor.execute('UPDATE ProfileMeta SET profile_name = ? WHERE profile_id = ?',
+                            (profile_object.name, profile_object.id))
+        self.connection.commit()
+        self.close_connection()
 
     def save_profile_entry(self, profile_entry, profile_obj):
         """
