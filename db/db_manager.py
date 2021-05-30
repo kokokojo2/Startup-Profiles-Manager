@@ -14,7 +14,7 @@ class DB:
         return cls.instance
 
     def __init__(self):
-        self.db_name = config.DATABASE_FILENAME
+        self.db_name = config.DATABASE_FULL_PATH
         self.connection = None
         self.cursor = None
 
