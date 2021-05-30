@@ -30,7 +30,7 @@ class Profile:
     def __str__(self):
         result = f'Profile "{self.name}".\nEntries:\n'
         for entry in self.entries:
-            result += str(entry)
+            result += str(entry) + '\n'
 
         return result
 
