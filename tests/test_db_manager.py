@@ -7,7 +7,7 @@ from base.data_classes import Profile, ProfileEntry
 class TestDBManager(unittest.TestCase):
 
     def setUp(self):
-        self.db_manager = DB('test.sqlite3')
+        self.db_manager = DB()
         self.db_manager.create_default_structure()
 
     def tearDown(self):
