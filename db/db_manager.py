@@ -65,7 +65,7 @@ class DB:
             
             CREATE TABLE IF NOT EXISTS ProfileEntries(
                 entry_id INTEGER PRIMARY KEY,
-                entry_name VARCHAR(128),
+                entry_name VARCHAR(64),
                 executable_path TEXT,
                 priority INTEGER, 
                 profile_id INTEGER,
@@ -73,7 +73,6 @@ class DB:
                 REFERENCES ProfileMeta (profile_id)
                     ON UPDATE CASCADE
                     ON DELETE CASCADE 
-
             );
             '''
         )
@@ -113,7 +112,7 @@ class DB:
         for entry in profile_object.entries:
             if entry.id is not None:
                 self.logger.info(f'Updating profile entry with name - {entry.name} of {profile_object.name} profile.')
-                self.update_profile_entry(entry)
+                self.__update_profile_entry(entry)
             else:
                 self.logger.info(f'Saving profile entry with name - {entry.name} of {profile_object.name} profile.')
                 self.save_profile_entry(entry, profile_object)
@@ -151,7 +150,7 @@ class DB:
         self.cursor.execute('INSERT INTO ProfileEntries (entry_name, executable_path, priority, profile_id) VALUES(?, ?, ?, ?)',
                             (profile_entry.name, profile_entry.executable_path, profile_entry.priority, profile_obj.id))
 
-    def update_profile_entry(self, profile_entry):
+    def __update_profile_entry(self, profile_entry):
         """
         Updates given profile entry.
         :param profile_entry: instance of ProfileEntry class with info about entry
@@ -159,6 +158,19 @@ class DB:
         """
         self.cursor.execute('UPDATE ProfileEntries SET entry_name=?, executable_path=?,  priority=? WHERE entry_id = ?',
                             (profile_entry.name, profile_entry.executable_path, profile_entry.priority, profile_entry.id))
+
+    def update_profile_entry(self, profile_entry):
+        """
+        Updates given profile entry. Establish connection automatically.
+        :param profile_entry: instance of ProfileEntry class with info about entry
+        :return:
+        """
+        self.get_cursor()
+        self.cursor.execute('UPDATE ProfileEntries SET entry_name=?, executable_path=?,  priority=? WHERE entry_id = ?',
+                            (profile_entry.name, profile_entry.executable_path, profile_entry.priority,
+                             profile_entry.id))
+        self.connection.commit()
+        self.close_connection()
 
     def delete_profile_entry(self, profile_entry):
         """
