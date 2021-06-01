@@ -181,7 +181,7 @@ class Application:
 
         while True:
             print('Choose one option:\n[1][Change name]\n[2][Change priority]\n[3][Change path to '
-                  'exe][4][Enable/Disable]\n[5][Exit to previous menu]\n')
+                  'exe]\n[4][Enable/Disable]\n[5][Exit to previous menu]\n')
             option = 0
             db_manager = DB()
             validator = Validator()
@@ -217,7 +217,7 @@ class Application:
 
             if option == 4:
                 option = input(
-                    f'This entry is now {"disabled" if entry.disabled else "enabled"}. Change to the opposite? [y/n]')
+                    f'This entry is now {"disabled" if entry.disabled else "enabled"}. Change to the opposite? [y/n]: ')
                 if option == 'y':
                     entry.disabled = not entry.disabled
 
