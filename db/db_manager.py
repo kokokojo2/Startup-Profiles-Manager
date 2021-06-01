@@ -40,6 +40,7 @@ class DB:
     def get_cursor(self):
         self.connect()
         self.cursor = self.connection.cursor()
+        self.cursor.execute('PRAGMA foreign_keys = ON')
 
     def close_connection(self):
 
@@ -105,16 +106,16 @@ class DB:
             self.logger.info(f'Updating profile with name - {profile_object.name} and id - {profile_object.id}.')
             self.__update_profile_metadata(profile_object)
         else:
-            self.logger.info(f'Updating profile with name - {profile_object.name}.')
+            self.logger.info(f'Saving profile with name - {profile_object.name}.')
             self.save_profile_metadata(profile_object)
+            profile_object.id = self.cursor.lastrowid
 
-        profile_object.id = self.cursor.lastrowid
         for entry in profile_object.entries:
             if entry.id is not None:
                 self.logger.info(f'Updating profile entry with name - {entry.name} of {profile_object.name} profile.')
                 self.__update_profile_entry(entry)
             else:
-                self.logger.info(f'Saving profile entry with name - {entry.name} of {profile_object.name} profile.')
+                self.logger.info(f'Saving profile entry with name - {entry.name}, id - {entry.id} of {profile_object.name} profile.')
                 self.save_profile_entry(entry, profile_object)
 
         self.connection.commit()
