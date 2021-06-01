@@ -37,7 +37,10 @@ class IntegrityChecker:
 
         if not os.path.exists(config.DATABASE_FULL_PATH):
             self.logger.info('Database does not exist. Creating one...')
-            os.makedirs(config.DATABASE_PATH)
+            try:
+                os.makedirs(config.DATABASE_PATH)
+            except FileExistsError:
+                self.logger.info('Data folder exist, but database does not.')
             db_manager.create_default_structure()
             self.logger.info('Database file with default structure created successfully.')
 
