@@ -2,12 +2,41 @@ from base.data_classes import Profile, ProfileEntry
 from db.db_manager import DB
 from script.startup import StartupManager
 from base.validator import Validator
+import config
+
+import logging
 
 
 class Application:
     """
     This class encapsulates functions that communicate with user and handle main procedures of an app.
     """
+
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(Application, cls).__new__(cls)
+
+        return cls.instance
+
+    def __init__(self):
+        self.db_name = config.DATABASE_FULL_PATH
+        self.connection = None
+        self.cursor = None
+
+        self.logger = logging.getLogger(config.APP_LOGGER_NAME)
+        log_file = logging.FileHandler(config.MAIN_LOG_PATH)
+        error_stream = logging.StreamHandler()
+
+        log_file.setLevel(logging.INFO)
+        log_file.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_FILE))
+
+        error_stream.setLevel(logging.WARNING)
+        error_stream.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_CONSOLE))
+
+        self.logger.addHandler(log_file)
+        self.logger.addHandler(error_stream)
+
+        self.logger.setLevel(logging.DEBUG)
 
     def get_object_from_list(self, objects_list):
         """
@@ -40,9 +69,11 @@ class Application:
 
             if profile_obj is not None:
                 print('Trying to launch config entries...')
+                self.logger.info(f'Running profile with name "{profile_obj.name}" and id - {profile_obj.id}')
+
                 launched_number = startup_manager.launch_profile(profile_obj)
                 print(f'Completed. Launched {launched_number} of {len(profile_obj.entries)} programs in your profile.')
-
+                self.logger.info(f'Completed. Launched {launched_number} of {len(profile_obj.entries)} programs.')
                 break
 
     def create_profile(self):
@@ -53,6 +84,7 @@ class Application:
         validator = Validator()
         db_manager = DB()
 
+        self.logger.info('Creating new profile...')
         while True:
             name = input('Enter a name of a new profile: ')
             if validator.bool_validate_name(name):
@@ -61,6 +93,7 @@ class Application:
 
         option = input('Create a profile entry? [y/n]: ')
         if option == 'y':
+            self.logger.info('Creating entries for profile...')
             new_profile.entries = self.create_profile_entries()
 
         db_manager.save_profile(new_profile)
@@ -94,8 +127,9 @@ class Application:
                         entries.append(new_entry)
                         break
 
-                option = input('Would you like to create another entry? [y/n]: ')
+                self.logger.info(f'Entry {new_entry} successfully created.')
 
+                option = input('Would you like to create another entry? [y/n]: ')
                 if option != 'y':
                     break
 
@@ -118,6 +152,8 @@ class Application:
                 break
 
         while True:
+            self.logger.info('Managing existing profile...')
+
             print(profile_obj)
             print('[1][Edit name]\n[2][Add entry]\n[3][Edit entry]\n[4][Delete entry]\n[5][Delete profile]\n['
                   '6][Exit to main menu]')
@@ -136,6 +172,7 @@ class Application:
 
                 profile_obj.name = new_name
                 db_manager.update_profile_metadata(profile_obj)
+                self.logger.info(f'Profile name changed to {profile_obj.name}')
 
             if option == 2:
                 new_entries = self.create_profile_entries()
@@ -179,6 +216,7 @@ class Application:
         :param entry: instance of ProfileEntry object that should be edited
         """
 
+        self.logger.info('Editing existing entry...')
         while True:
             print('Choose one option:\n[1][Change name]\n[2][Change priority]\n[3][Change path to '
                   'exe]\n[4][Enable/Disable]\n[5][Exit to previous menu]\n')
@@ -192,6 +230,7 @@ class Application:
                 print('Enter a valid option.')
 
             if option == 1:
+                self.logger.info('Changing name...')
                 while True:
                     new_name = input('Enter new name for a profile: ')
                     if validator.bool_validate_name(new_name):
@@ -200,6 +239,8 @@ class Application:
                 entry.name = new_name
 
             if option == 2:
+                self.logger.info('Changing priority...')
+
                 while True:
                     new_priority = validator.get_valid_priority(input('Enter new priority as an integer: '))
                     if new_priority is not None:
@@ -208,6 +249,8 @@ class Application:
                 entry.priority = new_priority
 
             if option == 3:
+                self.logger.info('Changing executable path...')
+
                 while True:
                     new_path = validator.get_valid_path(input('Enter new path using "\\" to distinguish locations: '))
                     if new_path is not None:
@@ -216,6 +259,8 @@ class Application:
                 entry.executable_path = new_path
 
             if option == 4:
+                self.logger.info('Disable/Enable...')
+
                 option = input(
                     f'This entry is now {"disabled" if entry.disabled else "enabled"}. Change to the opposite? [y/n]: ')
                 if option == 'y':
@@ -230,6 +275,8 @@ class Application:
         """
         Entry point of a console version of an app.
         """
+        self.logger.info('Main program execution started.')
+
         while True:
             print('Choose one option:')
             print('[1][Launch profile]\n[2][Create profile]\n[3][Manage my profiles]\n[4][Exit]\n')
