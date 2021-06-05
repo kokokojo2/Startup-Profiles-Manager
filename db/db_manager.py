@@ -68,7 +68,8 @@ class DB:
                 entry_id INTEGER PRIMARY KEY,
                 entry_name VARCHAR(64),
                 executable_path TEXT,
-                priority INTEGER, 
+                priority INTEGER,
+                disabled INTEGER,
                 profile_id INTEGER,
                 FOREIGN KEY (profile_id)
                 REFERENCES ProfileMeta (profile_id)
@@ -161,8 +162,8 @@ class DB:
         :param profile_entry: instance of ProfileEntry class with info about entry
         :return:
         """
-        self.cursor.execute('INSERT INTO ProfileEntries (entry_name, executable_path, priority, profile_id) VALUES(?, ?, ?, ?)',
-                            (profile_entry.name, profile_entry.executable_path, profile_entry.priority, profile_obj.id))
+        self.cursor.execute('INSERT INTO ProfileEntries (entry_name, executable_path, priority, disabled, profile_id) VALUES(?, ?, ?, ?, ?)',
+                            (profile_entry.name, profile_entry.executable_path, profile_entry.priority, int(profile_entry.disabled), profile_obj.id))
 
     def __update_profile_entry(self, profile_entry):
         """
@@ -170,8 +171,9 @@ class DB:
         :param profile_entry: instance of ProfileEntry class with info about entry
         :return:
         """
-        self.cursor.execute('UPDATE ProfileEntries SET entry_name=?, executable_path=?,  priority=? WHERE entry_id = ?',
-                            (profile_entry.name, profile_entry.executable_path, profile_entry.priority, profile_entry.id))
+        self.cursor.execute('UPDATE ProfileEntries SET entry_name=?, executable_path=?,  priority=?, disabled=? WHERE '
+                            'entry_id = ?',
+                            (profile_entry.name, profile_entry.executable_path, profile_entry.priority, int(profile_entry.disabled), profile_entry.id))
 
     def update_profile_entry(self, profile_entry):
         """
@@ -180,8 +182,8 @@ class DB:
         :return:
         """
         self.get_cursor()
-        self.cursor.execute('UPDATE ProfileEntries SET entry_name=?, executable_path=?,  priority=? WHERE entry_id = ?',
-                            (profile_entry.name, profile_entry.executable_path, profile_entry.priority,
+        self.cursor.execute('UPDATE ProfileEntries SET entry_name=?, executable_path=?,  priority=?, disabled=? WHERE entry_id = ?',
+                            (profile_entry.name, profile_entry.executable_path, profile_entry.priority, int(profile_entry.disabled),
                              profile_entry.id))
         self.connection.commit()
         self.close_connection()
@@ -192,6 +194,7 @@ class DB:
         :param profile_entry: instance of ProfileEntry class with info about entry
         :return:
         """
+        self.logger.info(f'Deleting entry {profile_entry} from database.')
         self.get_cursor()
         self.cursor.execute('DELETE FROM ProfileEntries WHERE entry_id = ?', (profile_entry.id, ))
         self.connection.commit()
@@ -241,7 +244,7 @@ class DB:
 
         entries_list = []
         for raw_entry in raw_entries_list:
-            entry = ProfileEntry(raw_entry[1], raw_entry[3], executable_path=raw_entry[2], id=raw_entry[0])
+            entry = ProfileEntry(raw_entry[1], raw_entry[3], executable_path=raw_entry[2], id=raw_entry[0], disabled=bool(raw_entry[4]))
             entries_list.append(entry)
 
         self.connection.commit()
