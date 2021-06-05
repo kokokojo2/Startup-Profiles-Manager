@@ -18,6 +18,7 @@ class IntegrityChecker:
 
     def __init__(self):
         self.logger = logging.getLogger(config.INT_CHECKER_LOGGER_NAME)
+        self.check_log_folder_existence()
         log_file = logging.FileHandler(config.MAIN_LOG_PATH)
         error_stream = logging.StreamHandler()
 
@@ -44,10 +45,16 @@ class IntegrityChecker:
             db_manager.create_default_structure()
             self.logger.info('Database file with default structure created successfully.')
 
+    def check_log_folder_existence(self):
+
+        if not os.path.exists(config.LOGS_DIR):
+            os.makedirs(config.LOGS_DIR)
+
     def check(self):
         """
         Performs a main check and repairment.
         """
 
+        self.check_log_folder_existence()
         self.check_db_existence()
 
