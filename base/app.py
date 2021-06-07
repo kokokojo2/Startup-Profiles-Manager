@@ -68,7 +68,7 @@ class Application:
             profile_obj = self.get_object_from_list(db_manager.get_profile_list())
 
             if profile_obj is not None:
-                print('Trying to launch config entries...')
+                print(f'Running {profile_obj}')
                 self.logger.info(f'Running profile with name "{profile_obj.name}" and id - {profile_obj.id}')
 
                 launched_number = startup_manager.launch_profile(profile_obj)
@@ -91,17 +91,22 @@ class Application:
                 new_profile = Profile(name)
                 break
 
+        option = input('Do you want this profile to launch with delay after each entry? This option is recommended for '
+                       'decreasing system resources usage. (You can change it later) [y/n]: ')
+        if option == 'y':
+            new_profile.timeout_mode = True
+
         option = input('Create a profile entry? [y/n]: ')
         if option == 'y':
             self.logger.info('Creating entries for profile...')
-            new_profile.entries = self.create_profile_entries()
+            new_profile.entries = self.create_profile_entries(new_profile.timeout_mode)
 
         db_manager.save_profile(new_profile)
 
         print(f'Created profile:\n{new_profile}')
         print(f'Profile saved to database. You can launch it any time from main menu.')
 
-    def create_profile_entries(self):
+    def create_profile_entries(self, slow_mode):
         """
         Procedure that handles entries creation.
         :return: list of created profile entries
@@ -124,9 +129,19 @@ class Application:
 
                     if exe_path_valid is not None:
                         new_entry.executable_path = exe_path_valid
-                        entries.append(new_entry)
                         break
 
+                while slow_mode:
+                    timeout = input('Enter a timeout for entry in minutes as an integer or float. Program will wait '
+                                    'this amount of time before launching next entry. Usually it is a time that entry '
+                                    'require to start itself.')
+                    timeout_valid = validator.get_valid_timeout(timeout)
+
+                    if timeout_valid is not None:
+                        new_entry.launch_time = timeout_valid
+                        break
+
+                entries.append(new_entry)
                 self.logger.info(f'Entry {new_entry} successfully created.')
 
                 option = input('Would you like to create another entry? [y/n]: ')
@@ -155,8 +170,8 @@ class Application:
             self.logger.info('Managing existing profile...')
 
             print(profile_obj)
-            print('[1][Edit name]\n[2][Add entry]\n[3][Edit entry]\n[4][Delete entry]\n[5][Delete profile]\n['
-                  '6][Exit to main menu]')
+            print('[1][Edit name]\n[2][Enable/Disable timeout mode]\n[3][Add entry]\n[4][Edit entry]\n[5][Delete '
+                  'entry]\n[6][Delete profile]\n[7][Exit to main menu]')
             option = 0
 
             try:
@@ -175,11 +190,18 @@ class Application:
                 self.logger.info(f'Profile name changed to {profile_obj.name}')
 
             if option == 2:
-                new_entries = self.create_profile_entries()
+                option = input(
+                    f'Would you like to {"disable" if profile_obj.timeout_mode else "enable"} timeout mode? [y/n]: ')
+                if option == 'y':
+                    profile_obj.timeout_mode = not profile_obj.timeout_mode
+                    db_manager.update_profile_metadata(profile_obj)
+
+            if option == 3:
+                new_entries = self.create_profile_entries(profile_obj.timeout_mode)
                 profile_obj.entries += new_entries
                 db_manager.save_profile(profile_obj)
 
-            if option == 3:
+            if option == 4:
                 while True:
                     print('Choose entry to edit it:')
                     entry = self.get_object_from_list(profile_obj.entries)
@@ -187,7 +209,7 @@ class Application:
                         break
                 self.edit_entry(entry)
 
-            if option == 4:
+            if option == 5:
                 while True:
                     print('Choose entry to delete it:')
                     entry = self.get_object_from_list(profile_obj.entries)
@@ -196,7 +218,7 @@ class Application:
 
                 db_manager.delete_profile_entry(entry)
 
-            if option == 5:
+            if option == 6:
                 option = input('Are you sure want to delete whole profile? [y/n]: ')
 
                 if option == 'y':
@@ -204,10 +226,10 @@ class Application:
                     print('Profile was deleted.')
                     return
 
-            if option == 6:
+            if option == 7:
                 break
 
-            if option == 3 or option == 4:
+            if option == 4 or option == 5:
                 profile_obj.entries = db_manager.get_profile_entries(profile_obj)
 
     def edit_entry(self, entry):
@@ -219,7 +241,7 @@ class Application:
         self.logger.info('Editing existing entry...')
         while True:
             print('Choose one option:\n[1][Change name]\n[2][Change priority]\n[3][Change path to '
-                  'exe]\n[4][Enable/Disable]\n[5][Exit to previous menu]\n')
+                  'exe]\n[4][Enable/Disable]\n[5][Change timeout]\n[6][Exit to previous menu]\n')
             option = 0
             db_manager = DB()
             validator = Validator()
@@ -267,6 +289,18 @@ class Application:
                     entry.disabled = not entry.disabled
 
             if option == 5:
+                self.logger.info('Changing timeout number...')
+
+                while True:
+                    timeout = input('Enter new timeout in seconds. The program will wait this amount of time before '
+                                    'launching next entry.')
+                    timeout_valid = validator.get_valid_timeout(timeout)
+
+                    if timeout_valid is not None:
+                        break
+                entry.launch_time = timeout_valid
+
+            if option == 6:
                 break
 
             db_manager.update_profile_entry(entry)
@@ -288,7 +322,7 @@ class Application:
 
             if option == 1:
                 self.run_profile()
-                
+
             if option == 2:
                 self.create_profile()
 
