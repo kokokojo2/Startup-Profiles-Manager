@@ -44,16 +44,28 @@ class Application:
         :param objects_list: list of objects to choose from
         :return: chosen object
         """
+        if len(objects_list) == 0:
+            print('There is no items to choose from. Please, create one first.')
+            return -1
 
-        for index, obj in enumerate(objects_list):
-            print(f'[{index}][{obj.name}]')
+        else:
+            for index, obj in enumerate(objects_list):
+                print(f'[{index}][{obj.name}]')
+            print(f'[-1][Exit to previous menu]')
 
-        try:
-            option = int(input())
-            obj = objects_list[option]
-            return obj
-        except (ValueError, IndexError):
-            print('Enter a valid index from a given list.')
+            try:
+                option = int(input())
+                obj = objects_list[option]
+                if option == -1:
+                    return option
+
+                if option < -1:
+                    print('Enter a valid index from a given list.')
+                    return None
+
+                return obj
+            except (ValueError, IndexError):
+                print('Enter a valid index from a given list.')
 
     def run_profile(self):
         """
@@ -66,6 +78,8 @@ class Application:
             startup_manager = StartupManager()
             db_manager = DB()
             profile_obj = self.get_object_from_list(db_manager.get_profile_list())
+            if isinstance(profile_obj, int):
+                break
 
             if profile_obj is not None:
                 print(f'Running {profile_obj}')
@@ -88,7 +102,7 @@ class Application:
         while True:
             name = input('Enter a name of a new profile: ')
             if validator.bool_validate_name(name):
-                new_profile = Profile(name)
+                new_profile = Profile(name, entries=[])
                 break
 
         option = input('Do you want this profile to launch with delay after each entry? This option is recommended for '
@@ -142,7 +156,7 @@ class Application:
                         break
 
                 entries.append(new_entry)
-                self.logger.info(f'Entry {new_entry} successfully created.')
+                self.logger.info(f'Entry\n{new_entry} successfully created.')
 
                 option = input('Would you like to create another entry? [y/n]: ')
                 if option != 'y':
@@ -166,7 +180,7 @@ class Application:
             if profile_obj is not None:
                 break
 
-        while True:
+        while profile_obj != -1:
             self.logger.info('Managing existing profile...')
 
             print(profile_obj)
@@ -207,7 +221,9 @@ class Application:
                     entry = self.get_object_from_list(profile_obj.entries)
                     if entry is not None:
                         break
-                self.edit_entry(entry)
+
+                if entry != -1:
+                    self.edit_entry(entry)
 
             if option == 5:
                 while True:
@@ -215,8 +231,8 @@ class Application:
                     entry = self.get_object_from_list(profile_obj.entries)
                     if entry is not None:
                         break
-
-                db_manager.delete_profile_entry(entry)
+                if entry != -1:
+                    db_manager.delete_profile_entry(entry)
 
             if option == 6:
                 option = input('Are you sure want to delete whole profile? [y/n]: ')
