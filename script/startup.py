@@ -64,12 +64,12 @@ class StartupManager:
         num_of_success_runs = 0
         profile_obj.entries.sort(key=lambda x: x.priority)
 
-        for entry in profile_obj.entries:
+        for i, entry in enumerate(profile_obj.entries):
             if not entry.disabled and entry.executable_path is not None:
                 if self.run_executable_from_path(entry):
                     num_of_success_runs += 1
 
-                if profile_obj.timeout_mode:
+                if profile_obj.timeout_mode and i != len(profile_obj.entries - 1):
                     print(f'Entry has a timeout of {entry.launch_time} minutes. Waiting...')
                     sleep(entry.launch_time * 60)
 
