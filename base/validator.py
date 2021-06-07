@@ -63,6 +63,14 @@ class Validator:
         except ValueError:
             self.logger.warning('Priority should be a number.')
 
+    def get_valid_timeout(self, timeout):
+
+        try:
+            timeout = float(timeout)
+            return timeout
+        except ValueError:
+            self.logger.warning('Timeout should be a number.')
+
     def get_valid_path(self, path):
 
         if not self.bool_validate_path(path):
