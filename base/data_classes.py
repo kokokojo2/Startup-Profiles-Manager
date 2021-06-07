@@ -9,6 +9,7 @@ class ProfileEntry:
 
     name: str
     priority: int
+    launch_time: int = 0
     executable_path: str = None
     id: int = None
     disabled: bool = False
@@ -26,12 +27,14 @@ class Profile:
     name: str
     entries: list[ProfileEntry] = None
     id: int = None
+    timeout_mode: bool = False
 
     def __str__(self):
         result = f'Profile "{self.name}".\nEntries:\n'
         for entry in self.entries:
             result += str(entry) + '\n'
 
-        return result
+        return f'Profile "{self.name}".\n-Timeout mode: {"enabled" if self.timeout_mode else "disabled"}.\nEntries:\n{table}'
+
 
 
