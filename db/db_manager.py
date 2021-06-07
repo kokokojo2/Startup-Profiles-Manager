@@ -61,7 +61,8 @@ class DB:
             '''
             CREATE TABLE IF NOT EXISTS ProfileMeta (
                 profile_id INTEGER PRIMARY KEY,
-                profile_name VARCHAR(64)  
+                profile_name VARCHAR(64),
+                timeout_mode INTEGER 
             );
             
             CREATE TABLE IF NOT EXISTS ProfileEntries(
@@ -70,6 +71,7 @@ class DB:
                 executable_path TEXT,
                 priority INTEGER,
                 disabled INTEGER,
+                launch_time FLOAT,
                 profile_id INTEGER,
                 FOREIGN KEY (profile_id)
                 REFERENCES ProfileMeta (profile_id)
@@ -130,8 +132,11 @@ class DB:
         :return:
         """
 
-        self.cursor.execute('INSERT INTO ProfileMeta (profile_name) VALUES(?)',
-                            (profile_object.name, ))
+        self.cursor.execute('INSERT INTO ProfileMeta (profile_name, timeout_mode) VALUES(?, ?)',
+                            (
+                                profile_object.name,
+                                int(profile_object.timeout_mode)
+                            ))
 
     def __update_profile_metadata(self, profile_object):
         """
@@ -139,8 +144,12 @@ class DB:
         :param profile_object: Profile instance
         :return:
         """
-        self.cursor.execute('UPDATE ProfileMeta SET profile_name = ? WHERE profile_id = ?',
-                            (profile_object.name, profile_object.id))
+        self.cursor.execute('UPDATE ProfileMeta SET profile_name = ?, timeout_mode = ? WHERE profile_id = ?',
+                            (
+                                profile_object.name,
+                                int(profile_object.timeout_mode),
+                                profile_object.id
+                            ))
 
     def update_profile_metadata(self, profile_object):
         """
@@ -150,8 +159,12 @@ class DB:
         :return:
         """
         self.get_cursor()
-        self.cursor.execute('UPDATE ProfileMeta SET profile_name = ? WHERE profile_id = ?',
-                            (profile_object.name, profile_object.id))
+        self.cursor.execute('UPDATE ProfileMeta SET profile_name = ?, timeout_mode = ? WHERE profile_id = ?',
+                            (
+                                profile_object.name,
+                                int(profile_object.timeout_mode),
+                                profile_object.id
+                            ))
         self.connection.commit()
         self.close_connection()
 
@@ -162,8 +175,15 @@ class DB:
         :param profile_entry: instance of ProfileEntry class with info about entry
         :return:
         """
-        self.cursor.execute('INSERT INTO ProfileEntries (entry_name, executable_path, priority, disabled, profile_id) VALUES(?, ?, ?, ?, ?)',
-                            (profile_entry.name, profile_entry.executable_path, profile_entry.priority, int(profile_entry.disabled), profile_obj.id))
+        self.cursor.execute('INSERT INTO ProfileEntries (entry_name, executable_path, priority, disabled, launch_time, profile_id) VALUES(?, ?, ?, ?, ?, ?)',
+                            (
+                                profile_entry.name,
+                                profile_entry.executable_path,
+                                profile_entry.priority,
+                                int(profile_entry.disabled),
+                                profile_entry.launch_time,
+                                profile_obj.id
+                            ))
 
     def __update_profile_entry(self, profile_entry):
         """
@@ -171,9 +191,15 @@ class DB:
         :param profile_entry: instance of ProfileEntry class with info about entry
         :return:
         """
-        self.cursor.execute('UPDATE ProfileEntries SET entry_name=?, executable_path=?,  priority=?, disabled=? WHERE '
-                            'entry_id = ?',
-                            (profile_entry.name, profile_entry.executable_path, profile_entry.priority, int(profile_entry.disabled), profile_entry.id))
+        self.cursor.execute('UPDATE ProfileEntries SET entry_name=?, executable_path=?,  priority=?, disabled=?, launch_time=? WHERE entry_id = ?',
+                            (
+                                profile_entry.name,
+                                profile_entry.executable_path,
+                                profile_entry.priority,
+                                int(profile_entry.disabled),
+                                profile_entry.launch_time,
+                                profile_entry.id
+                             ))
 
     def update_profile_entry(self, profile_entry):
         """
@@ -182,9 +208,16 @@ class DB:
         :return:
         """
         self.get_cursor()
-        self.cursor.execute('UPDATE ProfileEntries SET entry_name=?, executable_path=?,  priority=?, disabled=? WHERE entry_id = ?',
-                            (profile_entry.name, profile_entry.executable_path, profile_entry.priority, int(profile_entry.disabled),
-                             profile_entry.id))
+        self.cursor.execute(
+            'UPDATE ProfileEntries SET entry_name=?, executable_path=?,  priority=?, disabled=?, launch_time=? WHERE entry_id = ?',
+            (
+                profile_entry.name,
+                profile_entry.executable_path,
+                profile_entry.priority,
+                int(profile_entry.disabled),
+                profile_entry.launch_time,
+                profile_entry.id
+            ))
         self.connection.commit()
         self.close_connection()
 
@@ -225,7 +258,7 @@ class DB:
 
         profile_list = []
         for entry in raw_profile_list:
-            profile_obj = Profile(entry[1], id=entry[0])
+            profile_obj = Profile(entry[1], id=entry[0], timeout_mode=bool(entry[2]))
             profile_obj.entries = self.get_profile_entries(profile_obj)
             profile_list.append(profile_obj)
 
@@ -244,7 +277,15 @@ class DB:
 
         entries_list = []
         for raw_entry in raw_entries_list:
-            entry = ProfileEntry(raw_entry[1], raw_entry[3], executable_path=raw_entry[2], id=raw_entry[0], disabled=bool(raw_entry[4]))
+
+            entry = ProfileEntry(
+                raw_entry[1],
+                raw_entry[3],
+                executable_path=raw_entry[2],
+                id=raw_entry[0],
+                disabled=bool(raw_entry[4]),
+                launch_time=raw_entry[5]
+            )
             entries_list.append(entry)
 
         self.connection.commit()
