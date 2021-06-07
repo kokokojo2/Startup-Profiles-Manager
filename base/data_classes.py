@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from beautifultable import BeautifulTable
 
 
 @dataclass
@@ -15,7 +16,17 @@ class ProfileEntry:
     disabled: bool = False
 
     def __str__(self):
-        return f'{self.name}, pr: {self.priority}, enabled: {not self.disabled}, {self.executable_path}'
+        table = BeautifulTable()
+        table.columns.header = ['Name', 'Enabled', 'Priority', 'Timeout', 'Path to executable']
+
+        if self.disabled:
+            enabled = 'No'
+        else:
+            enabled = 'Yes'
+
+        table.rows.append([self.name, enabled, self.priority, self.launch_time, self.executable_path])
+
+        return str(table)
 
 
 @dataclass
@@ -30,9 +41,22 @@ class Profile:
     timeout_mode: bool = False
 
     def __str__(self):
-        result = f'Profile "{self.name}".\nEntries:\n'
+        table = BeautifulTable()
+        if self.timeout_mode:
+            table.columns.header = ['Name', 'Enabled', 'Priority', 'Timeout', 'Path to executable']
+        else:
+            table.columns.header = ['Name', 'Enabled', 'Priority', 'Path to executable']
+
         for entry in self.entries:
-            result += str(entry) + '\n'
+            if entry.disabled:
+                enabled = 'No'
+            else:
+                enabled = 'Yes'
+
+            if self.timeout_mode:
+                table.rows.append([entry.name,enabled, entry.priority, entry.launch_time, entry.executable_path])
+            else:
+                table.rows.append([entry.name,enabled, entry.priority, entry.executable_path])
 
         return f'Profile "{self.name}".\n-Timeout mode: {"enabled" if self.timeout_mode else "disabled"}.\nEntries:\n{table}'
 
