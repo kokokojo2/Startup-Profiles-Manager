@@ -1,4 +1,5 @@
 from subprocess import Popen
+from time import sleep
 import logging
 
 import config
@@ -67,6 +68,10 @@ class StartupManager:
             if not entry.disabled and entry.executable_path is not None:
                 if self.run_executable_from_path(entry):
                     num_of_success_runs += 1
+
+                if profile_obj.timeout_mode:
+                    print(f'Entry has a timeout of {entry.launch_time} minutes. Waiting...')
+                    sleep(entry.launch_time * 60)
 
             else:
                 self.logger.info(f'The profile entry with name "{entry.name}" is disabled.')
