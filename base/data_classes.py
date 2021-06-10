@@ -61,21 +61,12 @@ class Profile:
         return f'Profile "{self.name}".\n-Timeout mode: {"enabled" if self.timeout_mode else "disabled"}.\nEntries:\n{table}'
 
 
-class Singleton(type):
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls._instances[cls]
-
-
-class Settings(metaclass=Singleton):
+@dataclass
+class Settings:
     """
     This class encapsulates user settings in one object.
     """
+    close_after_launch: bool = False
+    enable_startup: bool = True
 
-    def __init__(self, close_after_launch=False, enable_startup=True):
-        self.close_after_launch = close_after_launch
-        self.enable_startup = enable_startup
 
