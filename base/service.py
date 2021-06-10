@@ -2,8 +2,8 @@ import logging
 import os
 
 import config
-from db.db_manager import DB
-from script.settings import SettingsManager, Settings
+from base.managers import DB, SettingsManager
+from base.data_classes import Settings
 
 
 class IntegrityChecker:

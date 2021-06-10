@@ -1,6 +1,6 @@
 import unittest
 
-from db.db_manager import DB
+from base.managers import DB
 from base.data_classes import Profile, ProfileEntry
 
 

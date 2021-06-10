@@ -1,13 +1,10 @@
 import time
-
-from base.data_classes import Profile, ProfileEntry
-from db.db_manager import DB
-from script.startup import StartupManager
-from base.validator import Validator
-from script.settings import SettingsManager
-import config
-
 import logging
+
+import config
+from base.data_classes import Profile, ProfileEntry
+from base.managers import DB, StartupManager, SettingsManager
+from base.validator import Validator
 
 
 class Application:

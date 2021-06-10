@@ -1,5 +1,5 @@
 from base.app import Application
-from script.service import IntegrityChecker
+from base.service import IntegrityChecker
 
 if __name__ == '__main__':
     checker = IntegrityChecker()
