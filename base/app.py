@@ -46,6 +46,7 @@ class Application:
         """
         if len(objects_list) == 0:
             print('There is no items to choose from. Please, create one first.')
+            input('Press enter to exit to previous menu.')
             return -1
 
         else:
@@ -91,7 +92,7 @@ class Application:
                 self.logger.info(f'Completed. Launched {launched_number} of {len(profile_obj.entries)} programs.')
                 break
 
-        if settings_manager.get_settings().close_after_launch:
+        if settings_manager.get_settings().close_after_launch and not isinstance(profile_obj, int):
             print('This program is configured to finish automatically after profile launch.')
             print('It will finish in:\n')
             for i in reversed(range(3)):
