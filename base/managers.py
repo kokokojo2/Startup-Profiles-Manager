@@ -41,7 +41,6 @@ class DB:
         self.logger.setLevel(logging.DEBUG)
 
     def connect(self):
-        # TODO: add an try-except block
         self.connection = sqlite3.connect(self.db_name)
 
     def get_cursor(self):
@@ -356,8 +355,7 @@ class SettingsManager:
                                    )
         shell = win_client.Dispatch('WScript.Shell')
         link = shell.CreateShortCut(folder_path)
-        # TODO: check after build
-        link.Targetpath = config.EXECUTABLE_FULL_PATH
+        link.Targetpath = config.ENTRY_POINT_FULL_PATH
         link.save()
 
     def remove_startup_shortcut(self):
@@ -419,7 +417,7 @@ class SettingsManager:
                           'startup_manager',
                           0,
                           winreg.REG_SZ,
-                          config.EXECUTABLE_FULL_PATH
+                          config.ENTRY_POINT_FULL_PATH
                           )
         winreg.CloseKey(registry_key)
         self.logger.info('Success.')
