@@ -3,6 +3,7 @@ import os
 
 import config
 from db.db_manager import DB
+from script.settings import SettingsManager, Settings
 
 
 class IntegrityChecker:
@@ -46,15 +47,26 @@ class IntegrityChecker:
             self.logger.info('Database file with default structure created successfully.')
 
     def check_log_folder_existence(self):
-
+        self.logger.info('Checking for logs folder existence.')
         if not os.path.exists(config.LOGS_DIR):
             os.makedirs(config.LOGS_DIR)
+        self.logger.info('Done.')
+
+    def check_settings_existence(self):
+        self.logger.info('Checking for settings existence.')
+
+        if not os.path.exists(config.SETTINGS_FULL_PATH):
+            self.logger.info('Settings file does not exist. Creating with default settings...')
+            settings_manager = SettingsManager()
+            settings_manager.write_settings(Settings())
+            settings_manager.make_startup_shortcut()
 
     def check(self):
         """
         Performs a main check and repairment.
         """
 
+        # do not change an order of method calls. They are dependent on each other.
         self.check_log_folder_existence()
         self.check_db_existence()
-
+        self.check_settings_existence()
