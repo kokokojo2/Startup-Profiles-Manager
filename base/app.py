@@ -1,7 +1,10 @@
+import time
+
 from base.data_classes import Profile, ProfileEntry
 from db.db_manager import DB
 from script.startup import StartupManager
 from base.validator import Validator
+from script.settings import SettingsManager
 import config
 
 import logging
@@ -71,12 +74,13 @@ class Application:
         """
         Procedure that launches every enabled entry in a selected by user profile.
         """
+        startup_manager = StartupManager()
+        db_manager = DB()
+        settings_manager = SettingsManager()
 
         while True:
             print('Select profile to launch:')
 
-            startup_manager = StartupManager()
-            db_manager = DB()
             profile_obj = self.get_object_from_list(db_manager.get_profile_list())
             if isinstance(profile_obj, int):
                 break
@@ -89,6 +93,15 @@ class Application:
                 print(f'Completed. Launched {launched_number} of {len(profile_obj.entries)} programs in your profile.')
                 self.logger.info(f'Completed. Launched {launched_number} of {len(profile_obj.entries)} programs.')
                 break
+
+        if settings_manager.get_settings().close_after_launch:
+            print('This program is configured to finish automatically after profile launch.')
+            print('It will finish in:\n')
+            for i in reversed(range(3)):
+                print(f'{i} seconds.')
+                time.sleep(1)
+
+            return -1
 
     def create_profile(self):
         """
@@ -205,7 +218,10 @@ class Application:
 
             if option == 2:
                 option = input(
-                    f'Would you like to {"disable" if profile_obj.timeout_mode else "enable"} timeout mode? [y/n]: ')
+                    f'Would you like to {"disable" if profile_obj.timeout_mode else "enable"} timeout mode? [y/n]\nIf '
+                    f'you enable timeout mode, check out a profile entries, you might want to correct some timeout '
+                    f'amounts.\n ')
+
                 if option == 'y':
                     profile_obj.timeout_mode = not profile_obj.timeout_mode
                     db_manager.update_profile_metadata(profile_obj)
@@ -308,7 +324,7 @@ class Application:
                 self.logger.info('Changing timeout number...')
 
                 while True:
-                    timeout = input('Enter new timeout in seconds. The program will wait this amount of time before '
+                    timeout = input('Enter new timeout in minutes. The program will wait this amount of time before '
                                     'launching next entry.')
                     timeout_valid = validator.get_valid_timeout(timeout)
 
@@ -321,6 +337,35 @@ class Application:
 
             db_manager.update_profile_entry(entry)
 
+    def manage_setting(self):
+        """
+        This is
+        :return:
+        """
+        settings_manager = SettingsManager()
+        settings = settings_manager.get_settings()
+        self.logger.info('Manage settings...')
+        while True:
+            print(f'Choose one option:\n[1][{"Disable" if settings.enable_startup else "Enable"} start with '
+                  f'Windows]\n[2][{"Close" if not settings.close_after_launch else "Do not close"} after profile '
+                  f'launch]\n[3][Exit to previous menu]\n')
+            option = 0
+            try:
+                option = int(input())
+            except ValueError:
+                print('Enter a valid option.')
+
+            if option == 1:
+                settings.enable_startup = not settings.enable_startup
+
+            if option == 2:
+                settings.close_after_launch = not settings.close_after_launch
+
+            if option == 3:
+                break
+
+            settings_manager.satisfy_and_save(settings)
+
     def run(self):
         """
         Entry point of a console version of an app.
@@ -329,7 +374,7 @@ class Application:
 
         while True:
             print('Choose one option:')
-            print('[1][Launch profile]\n[2][Create profile]\n[3][Manage my profiles]\n[4][Exit]\n')
+            print('[1][Launch profile]\n[2][Create profile]\n[3][My profiles]\n[4][Settings]\n[5][Exit]\n')
             option = 0
             try:
                 option = int(input())
@@ -337,7 +382,8 @@ class Application:
                 print('Enter a valid option.')
 
             if option == 1:
-                self.run_profile()
+                if self.run_profile() == -1:
+                    break
 
             if option == 2:
                 self.create_profile()
@@ -346,4 +392,7 @@ class Application:
                 self.manage_profile()
 
             if option == 4:
+                self.manage_setting()
+
+            if option == 5:
                 break
