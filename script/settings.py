@@ -2,6 +2,8 @@ import config
 import logging
 import json
 import winreg
+import os
+import win32com.client as win_client
 
 from base.data_classes import Settings
 
@@ -33,41 +35,49 @@ class SettingsManager:
 
         self.logger.setLevel(logging.DEBUG)
 
-    def write_to_registry_file(self):
+    def satisfy_and_save(self, new_setting_obj):
         """
-        This function writes an entry to a windows startup registry in order to start this script with os.
+        This function checks new settings for changes, and makes according changes to a system.
+        :param new_setting_obj: instance of Settings class which represents new settings input from user.
         """
-        self.logger.info('Trying save an entry to a registry file...')
-        registry_key = winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER,
-            config.WINDOWS_REGISTRY_KEY,
-            0,
-            winreg.KEY_ALL_ACCESS
-        )
-        winreg.SetValueEx(registry_key,
-                          'startup_manager',
-                          0,
-                          winreg.REG_SZ,
-                          config.EXECUTABLE_FULL_PATH
-                          )
-        winreg.CloseKey(registry_key)
-        self.logger.info('Success.')
+        old_settings = self.get_settings()
 
-    def remove_from_registry_file(self):
+        if old_settings.enable_startup != new_setting_obj.enable_startup:
+            if new_setting_obj.enable_startup:
+                self.make_startup_shortcut()
+            else:
+                self.remove_startup_shortcut()
+
+        self.write_settings(new_setting_obj)
+
+    def make_startup_shortcut(self):
         """
-        This function removes an entry from a windows registry file.
+        This function makes a shortcut of a script and ads it to a windows startup folder.
         """
-        self.logger.info('Trying to delete entry from registry file...')
-        registry_key = winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER,
-            config.WINDOWS_REGISTRY_KEY,
-            0,
-            winreg.KEY_ALL_ACCESS
-        )
+        self.logger.info('Adding shortcut to a windows startup folder.')
+        folder_path = os.path.join(os.path.expanduser('~'),
+                                   'AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\'
+                                   'StartupManager.lnk'
+                                   )
+        shell = win_client.Dispatch('WScript.Shell')
+        link = shell.CreateShortCut(folder_path)
+        # TODO: check after build
+        link.Targetpath = config.EXECUTABLE_FULL_PATH
+        link.save()
+
+    def remove_startup_shortcut(self):
+        """
+        This function deletes shortcut from a windows startup folder.
+        """
+        self.logger.info('Removing shortcut from a windows startup folder.')
+        folder_path = os.path.join(os.path.expanduser('~'),
+                                   'AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\'
+                                   'StartupManager.lnk'
+                                   )
         try:
-            winreg.DeleteValue(registry_key, 'startup_manager')
-        except WindowsError:
-            self.logger.warning('Oops. Unexpected error occur while updating settings.')
+            os.remove(folder_path)
+        except FileNotFoundError:
+            self.logger.info('Startup windows folder does not contain shortcut, so unable to remove it.')
 
     def write_settings(self, setting_obj):
         """
@@ -97,3 +107,41 @@ class SettingsManager:
 
         parsed_settings = json.loads(raw_settings)
         return Settings(parsed_settings['close_after_launch'], parsed_settings['enable_startup'])
+
+    # old
+    def __write_to_registry_file(self):
+        """
+        This function writes an entry to a windows startup registry in order to start this script with os.
+        """
+        self.logger.info('Trying save an entry to a registry file...')
+        registry_key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            config.WINDOWS_REGISTRY_KEY,
+            0,
+            winreg.KEY_ALL_ACCESS
+        )
+        winreg.SetValueEx(registry_key,
+                          'startup_manager',
+                          0,
+                          winreg.REG_SZ,
+                          config.EXECUTABLE_FULL_PATH
+                          )
+        winreg.CloseKey(registry_key)
+        self.logger.info('Success.')
+
+    # old
+    def __remove_from_registry_file(self):
+        """
+        This function removes an entry from a windows registry file.
+        """
+        self.logger.info('Trying to delete entry from registry file...')
+        registry_key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            config.WINDOWS_REGISTRY_KEY,
+            0,
+            winreg.KEY_ALL_ACCESS
+        )
+        try:
+            winreg.DeleteValue(registry_key, 'startup_manager')
+        except WindowsError:
+            self.logger.warning('Oops. Unexpected error occur while updating settings.')
