@@ -1,10 +1,10 @@
 import os
+import sys
 
 
 # directory configuration
-APPLICATION_ROOT = os.path.dirname(os.path.realpath(__file__))
-# TODO: check if this stuff works with built .exe file
-EXECUTABLE_FULL_PATH = os.path.join(APPLICATION_ROOT, 'main.py')  # temporary
+APPLICATION_ROOT = os.path.dirname(sys.executable)
+EXECUTABLE_FULL_PATH = sys.executable
 LOGS_DIR = os.path.join(APPLICATION_ROOT, 'logfiles')
 
 # logging configuration
