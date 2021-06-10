@@ -69,7 +69,7 @@ class StartupManager:
                 if self.run_executable_from_path(entry):
                     num_of_success_runs += 1
 
-                if profile_obj.timeout_mode and i != len(profile_obj.entries - 1):
+                if profile_obj.timeout_mode and i != len(profile_obj.entries) - 1:
                     print(f'Entry has a timeout of {entry.launch_time} minutes. Waiting...')
                     sleep(entry.launch_time * 60)
 
