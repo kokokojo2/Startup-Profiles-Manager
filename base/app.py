@@ -1,5 +1,6 @@
 import time
 import logging
+from os import system
 
 import config
 from base.data_classes import Profile, ProfileEntry
@@ -68,6 +69,7 @@ class Application:
                 print('Enter a valid index from a given list.')
 
     def run_profile(self):
+        system('cls')
         """
         Procedure that launches every enabled entry in a selected by user profile.
         """
@@ -89,6 +91,7 @@ class Application:
                 launched_number = startup_manager.launch_profile(profile_obj)
                 print(f'Completed. Launched {launched_number} of {len(profile_obj.entries)} programs in your profile.')
                 self.logger.info(f'Completed. Launched {launched_number} of {len(profile_obj.entries)} programs.')
+                input('Press enter to go back to menu.')
                 break
 
         if settings_manager.get_settings().close_after_launch:
@@ -110,6 +113,7 @@ class Application:
 
         self.logger.info('Creating new profile...')
         while True:
+            system('cls')
             name = input('Enter a name of a new profile: ')
             if validator.bool_validate_name(name):
                 new_profile = Profile(name, entries=[])
@@ -129,6 +133,7 @@ class Application:
 
         print(f'Created profile:\n{new_profile}')
         print(f'Profile saved to database. You can launch it any time from main menu.')
+        input(f'Press enter to exit to a main menu.')
 
     def create_profile_entries(self, slow_mode):
         """
@@ -139,6 +144,7 @@ class Application:
         entries = []
         validator = Validator()
 
+        system('cls')
         while True:
             name = input('Enter a name of an entry. Typically it is a name of a associated program:\n')
             priority = input('Enter a priority for an entry using integer value (smaller number represents higher '
@@ -178,12 +184,13 @@ class Application:
         """
         Procedure that handles managing profile e.g. deleting, editing both profiles and entries and adding a new ones.
         """
-
+        system('cls')
         db_manager = DB()
         validator = Validator()
         profiles = db_manager.get_profile_list()
 
         while True:
+            system('cls')
             print('Select a profile: ')
             profile_obj = self.get_object_from_list(profiles)
 
@@ -191,6 +198,7 @@ class Application:
                 break
 
         while profile_obj != -1:
+            system('cls')
             self.logger.info('Managing existing profile...')
 
             print(profile_obj)
@@ -205,6 +213,7 @@ class Application:
 
             if option == 1:
                 while True:
+                    system('cls')
                     new_name = input('Enter a new profile name: ')
                     if validator.bool_validate_name(new_name):
                         break
@@ -230,6 +239,7 @@ class Application:
 
             if option == 4:
                 while True:
+                    system('cls')
                     print('Choose entry to edit it:')
                     entry = self.get_object_from_list(profile_obj.entries)
                     if entry is not None:
@@ -240,6 +250,7 @@ class Application:
 
             if option == 5:
                 while True:
+                    system('cls')
                     print('Choose entry to delete it:')
                     entry = self.get_object_from_list(profile_obj.entries)
                     if entry is not None:
@@ -269,6 +280,7 @@ class Application:
 
         self.logger.info('Editing existing entry...')
         while True:
+            system('cls')
             print('Choose one option:\n[1][Change name]\n[2][Change priority]\n[3][Change path to '
                   'exe]\n[4][Enable/Disable]\n[5][Change timeout]\n[6][Exit to previous menu]\n')
             option = 0
@@ -283,7 +295,7 @@ class Application:
             if option == 1:
                 self.logger.info('Changing name...')
                 while True:
-                    new_name = input('Enter new name for a profile: ')
+                    new_name = input('Enter new name for an entry: ')
                     if validator.bool_validate_name(new_name):
                         break
 
@@ -343,6 +355,7 @@ class Application:
         settings = settings_manager.get_settings()
         self.logger.info('Manage settings...')
         while True:
+            system('cls')
             print(f'Choose one option:\n[1][{"Disable" if settings.enable_startup else "Enable"} start with '
                   f'Windows]\n[2][{"Close" if not settings.close_after_launch else "Do not close"} after profile '
                   f'launch]\n[3][Exit to previous menu]\n')
@@ -370,6 +383,7 @@ class Application:
         self.logger.info('Main program execution started.')
 
         while True:
+            system('cls')
             print('Choose one option:')
             print('[1][Launch profile]\n[2][Create profile]\n[3][My profiles]\n[4][Settings]\n[5][Exit]\n')
             option = 0
