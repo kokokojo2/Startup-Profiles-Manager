@@ -92,17 +92,15 @@ class Application:
                 launched_number = startup_manager.launch_profile(profile_obj)
                 print(f'Completed. Launched {launched_number} of {len(profile_obj.entries)} programs in your profile.')
                 self.logger.info(f'Completed. Launched {launched_number} of {len(profile_obj.entries)} programs.')
-                input('Press enter to go back to menu.')
+                if settings_manager.get_settings().close_after_launch:
+                    print('This program is configured to finish automatically after profile launch.')
+                    print('It will finish in:\n')
+                    for i in reversed(range(1, 4)):
+                        print(f'{i} seconds.')
+                        time.sleep(1)
+                    return -1
+                input('Press enter to go to main menu.')
                 break
-
-        if settings_manager.get_settings().close_after_launch and not isinstance(profile_obj, int):
-            print('This program is configured to finish automatically after profile launch.')
-            print('It will finish in:\n')
-            for i in reversed(range(3)):
-                print(f'{i} seconds.')
-                time.sleep(1)
-
-            return -1
 
     def create_profile(self):
         """
