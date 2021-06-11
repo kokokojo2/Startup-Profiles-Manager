@@ -1,0 +1,4 @@
+beautifultable==1.0.1
+pypiwin32==223
+pywin32==300
+wcwidth==0.2.5
