@@ -1,0 +1,14 @@
+.main-slogan p{
+    font-size: 30px; padding-bottom: 10px;
+}
+
+img{
+    position: absolute;
+    right: 5px;
+    top: 7px;
+    width: 15px;
+    height: 15px;
+}
+
+.delete-wrap{
+}
