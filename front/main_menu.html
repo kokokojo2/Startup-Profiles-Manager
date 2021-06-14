@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Startup Manager</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="fonts/fonts.css">
+    <link rel="stylesheet" href="css/main menu.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a class="menu-selected"><span>Home</span></a></li>
+            <li><a><span>Create profile</span></a></li>
+            <li><a><span>Profiles</span></a></li>
+            <li><a><span>About</span></a></li>
+        </ul>
+    </nav>
+    <div class="right-popup">
+        <div class="setting">
+            <span>Start with Windows</span>
+            <div class="checkbox-wrapper">
+                <input type="checkbox" name="">             <!-- TODO: add name here-->
+            </div>
+        </div>
+        <div class="setting">
+            <span>Close after profile launch</span>
+            <div class="checkbox-wrapper">
+                <input type="checkbox" name="">             <!-- TODO: add name here-->
+            </div>
+        </div>
+    </div>
+    <div class="main-slogan">
+        <p class="big">Hi, there!</p>
+        <!-- Next tags are state dependent-->
+        <p>Please, choose a profile to launch.</p>
+        <!--<h2>You do not have any profiles to launch. Please, create one first.</h2>-->
+    </div>
+    <div class="profile-tiles">
+        <div class="row">
+                <div class="profile-container">
+                    <a><p class="profile-name">Work</p></a>
+                    <p class="apps-counter">7 apps</p>
+                </div>
+                <div class="profile-container">
+                    <a><p class="profile-name">Gamer</p></a>
+                    <p class="apps-counter">3 apps</p>
+                </div>
+                <div class="profile-container">
+                    <a><p class="profile-name">Beautiful home</p></a>
+                    <p class="apps-counter">4 apps</p>
+                </div>
+                <div class="profile-container">
+                    <a><p class="profile-name">CAD</p></a>
+                    <p class="apps-counter">10 apps</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="profile-container">
+                    <a><p class="profile-name">Surfing net</p></a>
+                    <p class="apps-counter">2 apps</p>
+                </div>
+                <div class="profile-container">
+                    <a><p class="profile-name">C++ developing</p></a>
+                    <p class="apps-counter">3 apps</p>
+                </div>
+                <div class="profile-container">
+                    <a><p class="profile-name">Fast meeting</p></a>
+                    <p class="apps-counter">4 apps</p>
+                </div>
+            </div>
+        </div>
+</body>
+<script>
+    profiles = document.getElementsByClassName("profile-container");
+    for (let i of profiles) {
+        i.onclick = function () {} // TODO: add loading another page
+    }
+</script>
+</html>
