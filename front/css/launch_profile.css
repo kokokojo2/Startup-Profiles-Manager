@@ -24,24 +24,6 @@
     display: flex;
 }
 
-.spinner{
-    content: "";
-    width: 10px;
-    height: 10px;
-    border: 3px solid transparent;
-    border-top-color: #12c2e9;
-    border-left-color: #12c2e9;
-    border-radius: 50%;
-    animation: loading .7s linear infinite;
-    margin-left: 5px;
-}
-
-@keyframes loading {
-    to {
-        transform: rotate(1turn);
-    }
-}
-
 .tick {
     position: relative;
     display: inline-block;
