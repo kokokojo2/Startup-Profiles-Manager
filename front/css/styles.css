@@ -1,0 +1,125 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+a {
+    text-decoration: none;
+    cursor: pointer;
+}
+body{
+    background-color: #32323e;
+    color: white;
+    padding: 0 30px;
+}
+
+nav{
+    padding-top: 20px;
+    padding-left: 15px;
+}
+ul{
+    display: flex;
+    font-family: "Mont Regular", serif;
+    font-size: 16px;
+    text-decoration: none;
+}
+ul li{
+    list-style: none;
+}
+
+ul li a{
+    margin-right: 35px;
+}
+
+.menu-selected{
+    padding: 10px 15px;
+    background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59);
+    border-radius: 20px;
+}
+
+.menu-selected span{
+    padding: 20px 10px;
+}
+
+input[type="checkbox"] {
+    cursor: pointer;
+    width: 40px;
+    height: 20px;
+    border-radius: 20px;
+
+    -webkit-appearance: none;
+    outline: none;
+    background: #454555;
+    transition: .1s;
+}
+
+input:checked[type="checkbox"] {
+    background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59);
+}
+
+input[type="checkbox"]:before {
+    content: '';
+
+    position: absolute;
+    top: 0;
+    right: 20px;
+
+    width: 20px;
+    height: 20px;
+    transform: scale(0.85);
+
+    border-radius: 20px;
+
+    background: white;
+    transition: .1s;
+}
+
+input:checked[type="checkbox"]:before{
+    right: 0;
+
+}
+
+.checkbox-wrapper{
+    position: relative;
+}
+
+.row{
+    display: flex;
+}
+
+.profile-container:hover{
+    background-color: #454555;
+
+}
+.profile-container{
+    width: 192px;
+    height: 106px;
+
+    margin-right: 15px;
+    margin-bottom: 15px;
+
+    background-color: #272730;
+    border-radius: 10px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+}
+
+.profile-name{
+    font-family: "Mont SemiBold", serif;
+    font-size: 16px;
+}
+
+.apps-counter{
+    font-family: "Myriad Pro Regular", serif;
+    font-size: 12px;
+}
+
+.profile-tiles{
+    position: absolute;
+    padding: 0 15px;
+    bottom: 25px;
+}
