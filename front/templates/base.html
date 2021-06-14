@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stertup Manager</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../fonts/fonts.css">
+    {% block head %}{% endblock %}
+</head>
+<body>
+<nav>
+    <ul>
+        <li><a class="menu-selected"><span>Home</span></a></li>
+        <li><a><span>Create profile</span></a></li>
+        <li><a><span>Profiles</span></a></li>
+        <li><a><span>About</span></a></li>
+    </ul>
+</nav>
+    {% block content %}{% endblock %}
+</body>
+{% block scripts %}{% endblock %}
+</html>
