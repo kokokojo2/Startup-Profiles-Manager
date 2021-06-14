@@ -1,15 +1,4 @@
-.right-popup{
-    position: absolute;
-    top: 20px;
-    right: 45px;
 
-    font-family: "Mont Regular", serif;
-    font-size: 13px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
 
 .setting{
     display: flex;
