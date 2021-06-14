@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block head %}<link rel="stylesheet" href="../css/launch_profile.css">{% endblock %}
+{% block content %}
+<div class="center-wrap">
+    <div class="main-slogan">
+        <p class="big" style="font-size: 30px; padding-bottom: 10px;">Launching Streamer</p> <!-- TODO: dynamic profile name-->
+        <div class="gradient-line"></div>
+    </div>
+    <div class="actions">
+        <div class="action">
+            <p>Steam</p>
+            <div class="tick"></div>
+        </div>
+        <div class="action">
+            <p>Timeout 1.5 min</p>
+             <div class="tick"></div>
+        </div>
+        <div class="action">
+            <p>Discord</p>
+            <div class="tick"></div>
+        </div>
+        <div class="action">
+            <p>Timeout 2 min</p>
+            <div class="spinner"></div>
+        </div>
+        <div class="action">
+            <p>OBS</p>
+            <div class="spinner"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+{% endblock %}
