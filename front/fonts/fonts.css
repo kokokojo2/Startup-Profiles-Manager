@@ -1,0 +1,20 @@
+@font-face {
+    font-family: 'Myriad Pro Regular';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Myriad Pro Regular'), url('MyriadPro.woff') format('woff');
+    }
+
+@font-face {
+    font-family: 'Mont Regular';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Mont Regular'), url('Mont-Regular.woff') format('woff');
+    }
+
+@font-face {
+    font-family: 'Mont Semibold';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Mont Semibold'), url('Mont-Semibold.woff') format('woff');
+    }
