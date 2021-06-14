@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block head %}<link rel="stylesheet" href="../css/create_profile.css">{% endblock %}
+{% block content %}
+<div class="right-popup">
+    <div class="message">
+        <div>Saving</div>
+        <div class="spinner"></div>
+    </div>
+    <div class="message">
+        <p>ⓘ priority has to be an integer</p>
+    </div>
+    <div class="message">
+        <p>ⓘ path should point on .exe or .lnk file</p>
+    </div>
+</div>
+<div class="center-container">
+    <input type="text" class="profile-name-detail" placeholder="New profile name">
+    <div class="checkbox-wrapper">
+        <p>Launch each entry with a delay</p>
+        <input type="checkbox" name="">             <!-- TODO: add name here-->
+    </div>
+    <table>
+        <tr id="head">
+            <th style="width: 20%">Name</th>
+            <th style="width: 10%">Priority</th>
+            <th style="width: 60%">Path to executable</th>
+        </tr>
+        <tr class="space1"></tr>
+        <tr class="profile-entry">
+            <td><input type="text" class="table-cell"></td>
+            <td><input type="text" class="table-cell"></td>
+            <td><input type="text" class="table-cell"></td>
+        </tr>
+    </table>
+        <button id="add-entry">Add entry</button>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.getElementById("add-entry").onclick = function () {
+
+        let new_entry = document.createElement('tr');
+        let checkbox = document.querySelector("input[type=checkbox]");
+        new_entry.innerHTML = "<td><input type=\"text\" class=\"table-cell\"></td>".repeat(checkbox.checked ? 4: 3);
+
+        let table = document.getElementsByTagName('table')[0];
+        table.appendChild(new_entry);
+    }
+</script>
+<script>
+    let checkbox = document.querySelector("input[type=checkbox]");
+
+    checkbox.addEventListener('change', function() {
+    if (this.checked) {
+        document.getElementById('head').innerHTML += "<th style=\"width: 15%\">Timeout</th>";
+        let table_rows = document.getElementsByTagName('tr');
+
+        for (let row of table_rows) {
+            if (row.id !== "head" && row.className !== "space1") {
+                row.appendChild(document.createElement('td'));
+            }
+        }
+  } else {
+        let head_row = document.getElementById('head');
+        head_row.removeChild(head_row.lastChild);
+        let table_rows = document.getElementsByTagName('tr');
+
+        for (let row of table_rows) {
+            if (row.id !== "head" && row.className !== "space1") {
+                row.removeChild(row.lastChild);
+            }
+        }
+  }
+});
+</script>
+{% endblock %}

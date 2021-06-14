@@ -1,0 +1,97 @@
+.checkbox-wrapper{
+    display: flex;
+    position: relative;
+    width: 235px;
+    margin: 0 auto;
+    font-family: "Myriad Pro Regular", serif;
+    font-size: 14px;
+}
+
+.checkbox-wrapper p{
+    padding-right: 10px;
+    padding-bottom: 60px;
+}
+
+input[type="checkbox"]:before {
+    top: 0;
+    right: 25px;
+
+}
+
+input:checked[type="checkbox"]:before {
+    top: 0;
+    right: 5px;
+}
+
+.center-container{
+    padding-top: 100px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.profile-name-detail{
+    margin-bottom: 20px;
+    background-color: #32323e;
+    font-family: "Mont SemiBold", serif;
+    font-size: 32px;
+
+}
+
+input{
+    text-decoration: none;
+    border: none;
+    color: white;
+    text-align: center;
+}
+
+input:focus{
+    outline: none;
+}
+
+.table-cell{
+    background-color: #272730;
+    font-family: "Myriad Pro Regular", serif;
+    font-size: 16px;
+    width: 100%;
+}
+
+table{
+    font-family: "Myriad Pro Regular", serif;
+    border-spacing: 5px;
+    table-layout: fixed;
+}
+
+table td, table th{
+    background-color: #272730;
+    border-radius: 10px;
+    padding: 3px;
+    font-weight: normal;
+}
+
+.space1{
+    height: 15px;
+}
+
+#add-entry{
+    background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59);
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: "Myriad Pro Regular", serif;
+    font-size: 16px;
+    width: 150px;
+    margin: 20px auto;
+}
+
+.message{
+    display: flex;
+    padding-bottom: 10px;
+}
+
+.right-popup p{
+    color: #F64F59FF;
+}
+
