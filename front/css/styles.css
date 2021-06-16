@@ -171,4 +171,8 @@ input:checked[type="checkbox"]:before{
     align-items: flex-end;
 }
 
+a{
+    text-decoration: none;
+    color: white;
+}
 
