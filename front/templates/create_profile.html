@@ -29,7 +29,7 @@
         <tr class="profile-entry">
             <td><input type="text" class="table-cell"></td>
             <td><input type="text" class="table-cell"></td>
-            <td><input type="text" class="table-cell"></td>
+            <td><input type="text" class="table-cell" ondrop="dropHandler(event)" placeholder="Drop .exe file or shortcut here."></td>
         </tr>
     </table>
         <button id="add-entry">Add entry</button>
@@ -41,7 +41,10 @@
 
         let new_entry = document.createElement('tr');
         let checkbox = document.querySelector("input[type=checkbox]");
-        new_entry.innerHTML = "<td><input type=\"text\" class=\"table-cell\"></td>".repeat(checkbox.checked ? 4: 3);
+        new_entry.innerHTML = "<td><input type=\"text\" class=\"table-cell\"></td>\n".repeat(2);
+        new_entry.innerHTML += "<td><input type=\"text\" class=\"table-cell\" ondrop=\"dropHandler(event)\" placeholder=\"Drop .exe file or shortcut here.\"></td>";
+
+        new_entry.innerHTML += checkbox.checked ? "<td><input type=\"text\" class=\"table-cell\"></td>" : ""
 
         let table = document.getElementsByTagName('table')[0];
         table.appendChild(new_entry);
@@ -67,10 +70,23 @@
 
         for (let row of table_rows) {
             if (row.id !== "head" && row.className !== "space1") {
+                console.log(row.lastChild, 'a')
                 row.removeChild(row.lastChild);
             }
         }
   }
 });
+</script>
+<script>
+    function dropHandler(ev) {
+        ev.preventDefault();
+
+        if (ev.dataTransfer.items) {
+              if (ev.dataTransfer.items[0].kind === 'file') {
+                  let file = ev.dataTransfer.items[0].getAsFile();
+                  ev.target.value = file.path;
+              }
+        }
+    }
 </script>
 {% endblock %}
