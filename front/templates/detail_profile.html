@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block head %}<link rel="stylesheet" href="../css/create_profile.css">{% endblock %}
+{% block content %}
+<div class="right-popup">
+    <div class="message">
+        <div>Saving</div>
+        <div class="spinner"></div>
+    </div>
+    <div class="message">
+        <p>ⓘ priority has to be an integer</p>
+    </div>
+    <div class="message">
+        <p>ⓘ path should point on .exe or .lnk file</p>
+    </div>
+</div>
+<div class="center-container">
+    <input type="text" class="profile-name-detail" placeholder="New profile name">
+    <div class="checkbox-wrapper">
+        <p>Launch each entry with a delay</p>
+        <input type="checkbox" name="">             <!-- TODO: add name here-->
+    </div>
+    <div class="table-wrapper">
+    <table>
+        <tr id="head">
+            <th style="width: 20%">Name</th>
+            <th style="width: 10%">Priority</th>
+            <th style="width: 60%">Path to executable</th>
+        </tr>
+        <tr class="space1"></tr>
+        <tr class="profile-entry">
+            <td><input type="text" class="table-cell"></td>
+            <td><input type="text" class="table-cell"></td>
+            <td><input type="text" class="table-cell" ondrop="dropHandler(event)" placeholder="Drop .exe file or shortcut here."></td>
+        </tr>
+    </table>
+    <table class="options">
+        <tr>
+            <th></th>
+            <th></th>
+        </tr>
+        <tr class="space1"></tr>
+        <tr class="option">
+            <td style="padding-top: 3px"><div class="disable-checkbox"><input type="checkbox"></div></td>
+            <td style="padding-top: 5px"><img src="../resources/trash.png" alt="delete"></td>
+        </tr>
+    </table>
+    </div>
+        <button id="add-entry">Add entry</button>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.getElementById("add-entry").onclick = function () {
+
+        let new_entry = document.createElement('tr');
+        new_entry.className = "profile-entry"
+        let checkbox = document.querySelector("input[type=checkbox]");
+        new_entry.innerHTML = "<td><input type=\"text\" class=\"table-cell\"></td>\n".repeat(2);
+        new_entry.innerHTML += "<td><input type=\"text\" class=\"table-cell\" ondrop=\"dropHandler(event)\" placeholder=\"Drop .exe file or shortcut here.\"></td>";
+
+        new_entry.innerHTML += checkbox.checked ? "<td><input type=\"text\" class=\"table-cell\"></td>" : ""
+
+        let tables = document.getElementsByTagName('table');
+        tables[0].appendChild(new_entry);
+        let options_row = document.createElement('tr');
+        options_row.className = 'option';
+        options_row.innerHTML = "<td  style=\"padding-top: 3px\"><div class=\"disable-checkbox\"><input type=\"checkbox\"></div></td>\n" +
+            "            <td><div style='height: 20px;'><img style='padding-top: 4px;' src=\"../resources/trash.png\" alt=\"delete\"></div></td>";
+        tables[1].appendChild(options_row);
+    }
+</script>
+<script>
+    let checkbox = document.querySelector("input[type=checkbox]");
+
+    checkbox.addEventListener('change', function() {
+    if (this.checked) {
+        document.getElementById('head').innerHTML += "<th style=\"width: 15%\">Timeout</th>";
+        let table_rows = document.getElementsByClassName('profile-entry');
+
+        for (let row of table_rows) {
+            if (row.id !== "head" && row.className !== "space1") {
+                row.appendChild(document.createElement('td'));
+            }
+        }
+  } else {
+        let head_row = document.getElementById('head');
+        head_row.removeChild(head_row.lastChild);
+        let table_rows = document.getElementsByClassName('profile-entry');
+
+        for (let row of table_rows) {
+            if (row.id !== "head" && row.className !== "space1") {
+                console.log(row.lastChild, 'a')
+                row.removeChild(row.lastChild);
+            }
+        }
+  }
+});
+</script>
+<script>
+    function dropHandler(ev) {
+        ev.preventDefault();
+
+        if (ev.dataTransfer.items) {
+              if (ev.dataTransfer.items[0].kind === 'file') {
+                  let file = ev.dataTransfer.items[0].getAsFile();
+                  ev.target.value = file.path;
+              }
+        }
+    }
+</script>
+{% endblock %}

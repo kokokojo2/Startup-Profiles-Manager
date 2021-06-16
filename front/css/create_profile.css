@@ -60,6 +60,7 @@ table{
     font-family: "Myriad Pro Regular", serif;
     border-spacing: 5px;
     table-layout: fixed;
+    width: 750px;
 }
 
 table td, table th{
@@ -95,3 +96,42 @@ table td, table th{
     color: #F64F59FF;
 }
 
+img{
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+
+.options{
+    width: 100px;
+    table-layout: fixed;
+}
+
+.options td, .options th{
+    background-color: transparent;
+}
+
+ .options th{
+     height: 17px;
+ }
+
+ .options td{
+     padding: 0;
+ }
+
+.table-wrapper{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.disable-checkbox{
+    width: 50px;
+    position: relative;
+    height: 20px;
+}
+
+.option{
+    height: 24px;
+    padding: 0;
+}
