@@ -27,7 +27,7 @@ Install needed requirements:
 ```
 pip install -r requirements.txt
 ```
-Launch a script:
+Launch the script:
 ```
 python main.py
 ```
