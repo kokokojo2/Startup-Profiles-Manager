@@ -11,6 +11,7 @@ So far, this script allows user to:
 * configure script to start with Windows and close itself after a launch of profile
 ## System requirements
 * OS - windows (tested on windows 10, some functions may not work on earlier versions)
+* Python 3.9
 
 ## Installation
 Clone this branch of a repo:
