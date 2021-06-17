@@ -22,22 +22,10 @@
 <script>
     async function add_curr_page_gradient(){
         let curr_page = await  eel.get_current_page_id()();
-        console.log(curr_page);
         document.getElementById(curr_page).className = "menu-selected";
-
     }
 
     add_curr_page_gradient();
-</script>
-<script>
-    console.log('Hi');
-    let menu_items = document.getElementsByTagName("li");
-    for(let item of menu_items) {
-        item.children[0].addEventListener('onclick', async function() {
-            console.log('fdjkghdfjgd');
-            await eel.update_current_page_id(item.id)();
-        })
-    }
 </script>
 <script>
     async function update_page_id(id) {
