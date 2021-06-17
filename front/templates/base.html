@@ -5,18 +5,44 @@
     <title>Startup Manager</title>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../fonts/fonts.css">
+    <script type="text/javascript" src="/eel.js"></script>
     {% block head %}{% endblock %}
 </head>
 <body>
 <nav>
     <ul>
-        <li><a class="menu-selected" href="main_menu.html"><span>Home</span></a></li>
-        <li><a href="create_profile.html"><span>Create profile</span></a></li>
-        <li><a href="choose_profile.html"><span>Profiles</span></a></li>
-        <li><a href="about.html"><span>About</span></a></li>
+        <li><a href="main_menu.html" id="0" onclick="update_page_id(0)"><span>Home</span></a></li>
+        <li><a href="create_profile.html" id="1" onclick="update_page_id(1)"><span>Create profile</span></a></li>
+        <li><a href="choose_profile.html" id="4" onclick="update_page_id(4)"><span>Profiles</span></a></li>
+        <li><a href="about.html" id="6" onclick="update_page_id(6)"><span>About</span></a></li>
     </ul>
 </nav>
     {% block content %}{% endblock %}
 </body>
+<script>
+    async function add_curr_page_gradient(){
+        let curr_page = await  eel.get_current_page_id()();
+        console.log(curr_page);
+        document.getElementById(curr_page).className = "menu-selected";
+
+    }
+
+    add_curr_page_gradient();
+</script>
+<script>
+    console.log('Hi');
+    let menu_items = document.getElementsByTagName("li");
+    for(let item of menu_items) {
+        item.children[0].addEventListener('onclick', async function() {
+            console.log('fdjkghdfjgd');
+            await eel.update_current_page_id(item.id)();
+        })
+    }
+</script>
+<script>
+    async function update_page_id(id) {
+        await eel.update_current_page_id(id)();
+    }
+</script>
 {% block scripts %}{% endblock %}
 </html>
