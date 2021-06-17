@@ -20,8 +20,8 @@ cd Startup-Profiles-Manager
 ```
 Make and activate virtual environment:
 ```
-python -m venv countdown_env
-countdown_env\Scripts\activate
+python -m venv env
+env\Scripts\activate
 ```
 Install needed requirements:
 ```
