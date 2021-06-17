@@ -60,7 +60,6 @@ table{
     font-family: "Myriad Pro Regular", serif;
     border-spacing: 5px;
     table-layout: fixed;
-    width: 750px;
 }
 
 table td, table th{
