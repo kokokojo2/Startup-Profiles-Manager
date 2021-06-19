@@ -17,14 +17,15 @@
         <li><a href="about.html" id="6" onclick="update_page_id(6)"><span>About</span></a></li>
     </ul>
 </nav>
+<div id="contents">
     {% block content %}{% endblock %}
+</div>
 </body>
 <script>
     async function add_curr_page_gradient(){
         let curr_page = await  eel.get_current_page_id()();
         document.getElementById(curr_page).className = "menu-selected";
     }
-
     add_curr_page_gradient();
 </script>
 <script>
