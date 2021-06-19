@@ -28,6 +28,9 @@ class ProfileEntry:
 
         return str(table)
 
+    def get_json_dict(self):
+        return self.__dict__.copy()
+
 
 @dataclass
 class Profile:
@@ -59,6 +62,13 @@ class Profile:
                 table.rows.append([entry.name,enabled, entry.priority, entry.executable_path])
 
         return f'Profile "{self.name}".\n-Timeout mode: {"enabled" if self.timeout_mode else "disabled"}.\nEntries:\n{table}'
+
+    def get_json_dict(self):
+        raw_dict = self.__dict__.copy()
+        del raw_dict['entries']
+        raw_dict['entries_count'] = len(self.entries)
+
+        return raw_dict
 
 
 @dataclass
