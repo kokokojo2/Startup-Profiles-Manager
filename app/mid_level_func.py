@@ -1,8 +1,11 @@
+import json
+
 import eel
 import logging
 
 import config
-from state_management import StateManager
+from .state_management import StateManager
+from base.managers import DB
 
 logger = logging.getLogger(config.APP_LOGGER_NAME)
 log_file = logging.FileHandler(config.MAIN_LOG_PATH)
@@ -32,3 +35,23 @@ def update_current_page_id(page_id):
     logger.info('Updating current page id...')
     state = StateManager()
     state.current_page = int(page_id)
+
+
+@eel.expose
+def get_profile_list():
+    logger.info('Getting profile list for js call.')
+
+    db_manager = DB()
+    profiles = db_manager.get_profile_list()
+
+    json_serializable = []
+    for profile in profiles:
+        json_serializable.append(
+            {
+                'name': profile.name,
+                'entries_count': len(profile.entries),
+                'id': profile.id,
+            }
+        )
+
+    return json.dumps(json_serializable)
