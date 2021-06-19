@@ -302,6 +302,22 @@ class DB:
 
         return entries_list
 
+    def get_profile(self, profile_id):
+        """
+        Selects profile metadata and entries of a given profile id.
+        :param profile_id: int representing id of the profile in database
+        :return: instance of Profile
+        """
+
+        self.get_cursor()
+        self.cursor.execute('SELECT * FROM ProfileMeta WHERE profile_id = ?', (profile_id,))
+        raw_profile_meta = self.cursor.fetchone()
+
+        profile = Profile(raw_profile_meta[1], id=raw_profile_meta[0], timeout_mode=bool(raw_profile_meta[2]))
+        profile.entries = self.get_profile_entries(profile)
+
+        return profile
+
 
 class SettingsManager:
     """
