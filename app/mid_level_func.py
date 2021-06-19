@@ -5,7 +5,7 @@ import logging
 
 import config
 from .state_management import StateManager
-from base.managers import DB
+from base.managers import DB, StartupManager
 
 logger = logging.getLogger(config.APP_LOGGER_NAME)
 log_file = logging.FileHandler(config.MAIN_LOG_PATH)
@@ -44,14 +44,39 @@ def get_profile_list():
     db_manager = DB()
     profiles = db_manager.get_profile_list()
 
+    if len(profiles) == 0:
+        return '{ "status": "NO PROFILES" }'
     json_serializable = []
     for profile in profiles:
-        json_serializable.append(
-            {
-                'name': profile.name,
-                'entries_count': len(profile.entries),
-                'id': profile.id,
-            }
-        )
+        json_serializable.append(profile.get_json_dict())
+
+    json_serializable = {'status': 'OK', 'data': json_serializable}
+
+    return json.dumps(json_serializable)
+
+
+@eel.expose
+def launch_profile(profile_id):
+    logger.info('Launching profile for js call...')
+
+    db_manager = DB()
+    startup_manager = StartupManager()
+    current_profile = db_manager.get_profile(profile_id)
+
+    startup_manager.launch_profile(current_profile)
+
+
+@eel.expose
+def get_profile_info(profile_id):
+    logger.info('Getting profile for a js call.')
+
+    db_manager = DB()
+    profile = db_manager.get_profile(profile_id)
+    json_serializable = {'meta': profile.get_json_dict()}
+
+    raw_entries = []
+    for entry in profile.entries:
+        raw_entries.append(entry.get_json_dict())
+    json_serializable['entries'] = raw_entries
 
     return json.dumps(json_serializable)
