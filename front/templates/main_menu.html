@@ -1,38 +1,37 @@
 {% extends 'base.html' %}
 {% block head %}
     <link rel="stylesheet" href="../css/main%20menu.css">
+    <link rel="stylesheet" href="../css/launch_profile.css">
     <script type="text/javascript" src="../js/mid_level.js"></script>
 {% endblock %}
 {% block content %}
-<div class="right-popup">
-<div class="setting">
-    <span>Start with Windows</span>
-    <div class="checkbox-wrapper">
-        <input type="checkbox" name="">             <!-- TODO: add name here-->
+    <div class="right-popup">
+        <div class="setting">
+            <span>Start with Windows</span>
+            <div class="checkbox-wrapper">
+                <input type="checkbox" name="">             <!-- TODO: add name here-->
+            </div>
+        </div>
+        <div class="setting">
+            <span>Close after profile launch</span>
+            <div class="checkbox-wrapper">
+                <input type="checkbox" name="">             <!-- TODO: add name here-->
+            </div>
+        </div>
     </div>
-</div>
-<div class="setting">
-    <span>Close after profile launch</span>
-    <div class="checkbox-wrapper">
-        <input type="checkbox" name="">             <!-- TODO: add name here-->
+    <div class="main-slogan">
+        <p class="big">Hi, there!</p>
     </div>
-</div>
-</div>
-<div class="main-slogan">
-<p class="big">Hi, there!</p>
-<!-- TODO: catch an edge case when no profile is present-->
-<p>Please, choose a profile to launch.</p>
-<!--<h2>You do not have any profiles to launch. Please, create one first.</h2>-->
-</div>
-<div class="profile-tiles">
-</div>
+    <div class="profile-tiles"></div>
 {% endblock %}
 {% block scripts %}
 <script>
     load_profile_list();
-    profiles = document.getElementsByClassName("profile-container");
-    for (let i of profiles) {
-        i.onclick = function () {} // TODO: add loading another page
-    }
+    setTimeout(function () {
+        let profiles = document.getElementsByClassName("profile-container");
+        for(let profile of profiles) {
+            profile.addEventListener('click', choose_profile);
+        }
+    }, 500);
 </script>
 {% endblock %}
