@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
-{% block head %}<link rel="stylesheet" href="../css/main%20menu.css">{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="../css/main%20menu.css">
+    <script type="text/javascript" src="../js/mid_level.js"></script>
+{% endblock %}
 {% block content %}
 <div class="right-popup">
 <div class="setting">
@@ -22,42 +25,11 @@
 <!--<h2>You do not have any profiles to launch. Please, create one first.</h2>-->
 </div>
 <div class="profile-tiles">
-<div class="row">
-        <div class="profile-container">
-            <a><p class="profile-name">Work</p></a>
-            <p class="apps-counter">7 apps</p>
-        </div>
-        <div class="profile-container">
-            <a><p class="profile-name">Gamer</p></a>
-            <p class="apps-counter">3 apps</p>
-        </div>
-        <div class="profile-container">
-            <a><p class="profile-name">Beautiful home</p></a>
-            <p class="apps-counter">4 apps</p>
-        </div>
-        <div class="profile-container">
-            <a><p class="profile-name">CAD</p></a>
-            <p class="apps-counter">10 apps</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="profile-container">
-            <a><p class="profile-name">Surfing net</p></a>
-            <p class="apps-counter">2 apps</p>
-        </div>
-        <div class="profile-container">
-            <a><p class="profile-name">C++ developing</p></a>
-            <p class="apps-counter">3 apps</p>
-        </div>
-        <div class="profile-container">
-            <a><p class="profile-name">Fast meeting</p></a>
-            <p class="apps-counter">4 apps</p>
-        </div>
-    </div>
 </div>
 {% endblock %}
 {% block scripts %}
 <script>
+    load_profile_list();
     profiles = document.getElementsByClassName("profile-container");
     for (let i of profiles) {
         i.onclick = function () {} // TODO: add loading another page
