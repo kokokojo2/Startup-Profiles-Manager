@@ -1,9 +1,7 @@
 import eel
-
-
-from base.app import Application
-from base.service import IntegrityChecker
+import app.mid_level_func
 
 if __name__ == '__main__':
     eel.init('front')
-    eel.start('main_menu.html', mode='custom', cmdline_args=['node_modules/electron/dist/electron.exe', '.'])
+    eel.start('templates/detail_profile.html', mode='custom', cmdline_args=['node_modules/electron/dist/electron.exe', '.'],
+              jinja_templates='templates')
