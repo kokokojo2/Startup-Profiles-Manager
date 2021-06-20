@@ -35,12 +35,8 @@ async function load_profile_list() {
     document.getElementsByClassName("main-slogan")[0].appendChild(help_text);
 }
 
-async function choose_profile(event) {
-    let profile_info = await eel.get_profile_info(event.target.dataset.id)();
-
+async function choose_profile(profile_info) {
     clear_page();
-    profile_info = JSON.parse(profile_info);
-
     let center_wrap = document.createElement("div");
     center_wrap.className = "center-wrap";
 
@@ -54,18 +50,21 @@ async function choose_profile(event) {
     actions.className = "actions";
 
     for (let [i, entry] of profile_info.entries.entries()) {
-        let action = document.createElement("div");
-        action.className = "action";
+        if (! entry.disabled) {
+            let action = document.createElement("div");
+            action.className = "action";
+            action.id = `entry-${entry.id}`
 
-        action.innerHTML = `<p>${entry.name}</p>`;
-        actions.appendChild(action);
+            action.innerHTML = `<p>${entry.name}</p>`;
+            actions.appendChild(action);
 
-        if(profile_info.meta.timeout_mode && i !== profile_info.entries.length - 1) {
-            let timeout_action = document.createElement("div");
-            timeout_action.className = "action";
+            if(profile_info.meta.timeout_mode && i !== profile_info.entries.length - 1) {
+                let timeout_action = document.createElement("div");
+                timeout_action.className = "action";
 
-            timeout_action.innerHTML += `<p>Timeout ${entry.launch_time} min</p>`;
-            actions.appendChild(timeout_action);
+                timeout_action.innerHTML += `<p>Timeout ${entry.launch_time} min</p>`;
+                actions.appendChild(timeout_action);
+            }
         }
     }
 
@@ -75,7 +74,29 @@ async function choose_profile(event) {
     center_wrap.appendChild(actions);
     main_div.appendChild(center_wrap);
 
+    await eel.launch_profile(profile_info.meta.id)();
+}
 
+async function on_launch_profile(event) {
+    let profile_info = await eel.get_profile_info(event.target.dataset.id)();
+    profile_info = JSON.parse(profile_info);
+    choose_profile(profile_info);
+
+    for (let entry of profile_info.entries) {
+        let spinner = document.createElement("div");
+        spinner.className = "spinner";
+        document.getElementById(`entry-${entry.id}`).appendChild(spinner);
+
+        await new Promise(r => setTimeout(r, 500));
+        spinner.className = "tick";
+        if (profile_info.meta.timeout_mode) {
+            let timeout_spinner = document.createElement("div");
+            timeout_spinner.className = "spinner";
+            document.getElementById(`entry-${entry.id}`).nextSibling.appendChild(timeout_spinner);
+            await new Promise(r => setTimeout(r, entry.launch_time * 60 * 1000));
+            timeout_spinner.className = "tick";
+        }
+    }
 }
 
 function clear_page() {
@@ -84,3 +105,8 @@ function clear_page() {
         main_div.removeChild(main_div.firstChild);
     }
 }
+
+async function get_progress() {
+    return  raw_progress = await eel.get_launch_progress()();
+}
+
