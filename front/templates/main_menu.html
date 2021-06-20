@@ -9,13 +9,13 @@
         <div class="setting">
             <span>Start with Windows</span>
             <div class="checkbox-wrapper">
-                <input type="checkbox" name="">             <!-- TODO: add name here-->
+                <input type="checkbox" id="start-with-windows">
             </div>
         </div>
         <div class="setting">
             <span>Close after profile launch</span>
             <div class="checkbox-wrapper">
-                <input type="checkbox" name="">             <!-- TODO: add name here-->
+                <input type="checkbox" id="close-after-launch">
             </div>
         </div>
     </div>
@@ -25,13 +25,15 @@
     <div class="profile-tiles"></div>
 {% endblock %}
 {% block scripts %}
-<script>
-    load_profile_list();
-    setTimeout(function () {
-        let profiles = document.getElementsByClassName("profile-container");
-        for(let profile of profiles) {
-            profile.addEventListener('click', on_launch_profile);
-        }
-    }, 500);
-</script>
+    <script>
+        load_profile_list();
+        setTimeout(function () {
+            let profiles = document.getElementsByClassName("profile-container");
+            for(let profile of profiles) {
+                profile.addEventListener("click", on_launch_profile);
+            }
+        }, 500);
+        document.getElementById("close-after-launch").addEventListener("change", update_settings);
+        document.getElementById("start-with-windows").addEventListener("change", update_settings);
+    </script>
 {% endblock %}
