@@ -17,7 +17,7 @@
     <input type="text" class="profile-name-detail" placeholder="New profile name">
     <div class="checkbox-wrapper">
         <p>Launch each entry with a delay</p>
-        <input type="checkbox" name="">             <!-- TODO: add name here-->
+        <input type="checkbox" name="">
     </div>
     <table>
         <tr id="head">
@@ -32,7 +32,8 @@
             <td><input type="text" class="table-cell" ondrop="dropHandler(event)" placeholder="Drop .exe file or shortcut here."></td>
         </tr>
     </table>
-        <button id="add-entry">Add entry</button>
+        <button id="add-entry">+</button>
+        <button id="save">Save</button>
 </div>
 {% endblock %}
 {% block scripts %}

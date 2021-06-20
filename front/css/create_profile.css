@@ -74,6 +74,19 @@ table td, table th{
 }
 
 #add-entry{
+    background-color: #272730;
+    border: none;
+    padding: 2px 20px;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: "Myriad Pro Regular", serif;
+    font-size: 16px;
+    width: 99%;
+    margin: 3px auto;
+}
+
+#save{
     background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59);
     padding: 10px 20px;
     color: white;
