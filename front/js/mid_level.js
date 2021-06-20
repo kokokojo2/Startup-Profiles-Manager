@@ -106,7 +106,16 @@ function clear_page() {
     }
 }
 
-async function get_progress() {
-    return  raw_progress = await eel.get_launch_progress()();
-}
+async function update_settings() {
+    let setting1 = document.getElementById("start-with-windows");
+    let setting2 = document.getElementById("close-after-launch");
 
+    let settings_obj = {
+        close_after_launch: setting2.checked,
+        enable_startup: setting1.checked
+    };
+
+    console.log(JSON.stringify(settings_obj));
+    await eel.update_settings(JSON.stringify(settings_obj))();
+
+}
