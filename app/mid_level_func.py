@@ -5,7 +5,9 @@ import logging
 
 import config
 from .state_management import StateManager
-from base.managers import DB, StartupManager
+from base.managers import DB, StartupManager, SettingsManager
+from base.data_classes import Settings
+
 
 logger = logging.getLogger(config.APP_LOGGER_NAME)
 log_file = logging.FileHandler(config.MAIN_LOG_PATH)
@@ -80,3 +82,12 @@ def get_profile_info(profile_id):
     json_serializable['entries'] = raw_entries
 
     return json.dumps(json_serializable)
+
+
+@eel.expose
+def update_settings(settings_json):
+    parsed_settings = json.loads(settings_json)
+    settings = Settings(parsed_settings['close_after_launch'], parsed_settings['enable_startup'])
+
+    settings_manager = SettingsManager()
+    settings_manager.satisfy_and_save(settings)
