@@ -33,13 +33,13 @@ class Validator:
     def bool_validate_name(self, name):
         if len(name) > 64:
             self.logger.warning(f'Name should be less then 64 characters long, but input contains {len(name)} characters.')
-            return False
+            return False, 'Name should be less then 64 characters long.'
 
         if len(name) == 0:
             self.logger.warning('Name should have at least one character.')
-            return False
+            return False, 'Name should have at least one character.'
 
-        return True
+        return True, name
 
     def bool_validate_path(self, path):
         self.logger.info(f'Trying to validate path "{path}"')
@@ -47,38 +47,40 @@ class Validator:
         if not os.path.exists(path):
             print(path)
             self.logger.warning('Entered path does not exist.')
-            return False
+            return False, 'Entered path does not exist.'
 
         if not path.endswith('.exe') and not path.endswith('.lnk'):
             self.logger.warning('Entered path does not refer to an exe file or shortcut.')
-            return False
+            return False, 'Entered path does not refer to an exe file or shortcut.'
 
-        return True
+        return True, path
 
     def get_valid_priority(self, priority):
 
         try:
             priority = int(priority)
-            return priority
+            return True, priority
         except ValueError:
             self.logger.warning('Priority should be a number.')
+            return False, 'Priority should be a number.'
 
     def get_valid_timeout(self, timeout):
 
         try:
             timeout = float(timeout)
-            return timeout
+            return True, timeout
         except ValueError:
             self.logger.warning('Timeout should be a number.')
+            return False, 'Timeout should be a number.'
 
     def get_valid_path(self, path):
 
-        if not self.bool_validate_path(path):
-            return None
+        if not self.bool_validate_path(path)[0]:
+            return self.bool_validate_path(path)
 
         if path.endswith('.exe'):
             self.logger.info('Path validated successfully.')
-            return path
+            return True, path
 
         if path.endswith('.lnk'):
             self.logger.info('A shortcut has been detected.Trying to get target path...')
@@ -88,9 +90,9 @@ class Validator:
                 link = shell.CreateShortCut(path)
                 self.logger.info('Target path captured. Validation completed.')
 
-                return link.Targetpath
+                return True, link.Targetpath
             except Exception:
                 self.logger.warning('Unknown error occur while trying to get target of a windows shortcut file. '
                                     'Please, enter a path to actual .exe file. Check properties of a shortcut to find '
                                     'it.')
-                return None
+                return False, 'Unknown error occur while trying to get target of a windows shortcut file.'
