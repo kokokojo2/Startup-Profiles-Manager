@@ -119,3 +119,64 @@ async function update_settings() {
     await eel.update_settings(JSON.stringify(settings_obj))();
 
 }
+
+function parse_profile(mode) {  // TODO: add id and disabled parsing for detail page
+    let profile_obj = {
+            name: document.getElementsByClassName("profile-name-detail")[0].value,
+            timeout_mode: document.getElementById("timeout_mode").checked,
+            entries: []
+        }
+    let entries = document.getElementsByClassName("profile-entry");
+    for (let entry of entries) {
+        let entry_obj = {
+            name: entry.children[0].children[0].value,
+            priority: entry.children[1].children[0].value,
+            executable_path: entry.children[2].children[0].value,
+            launch_time: 0,
+        }
+        if (profile_obj.timeout_mode) {
+            entry_obj.launch_time = entry.children[3].children[0].value;
+        }
+
+        if (mode === "create") {
+            entry_obj.id = null;
+        }
+
+        profile_obj.entries.push(entry_obj);
+    }
+    if (mode === "create") {
+            profile_obj.id = null;
+    }
+
+    console.log(profile_obj);
+    return profile_obj;
+}
+
+async function save_profile(mode) {
+    let right_info_bar = document.getElementsByClassName("right-popup")[0];
+    let saving_spinner = document.createElement("div");
+    saving_spinner.className = "message";
+    saving_spinner.innerHTML = "<div>Saving</div><div class=\"spinner\"></div>";
+    right_info_bar.appendChild(saving_spinner);
+
+    let parsed_profile = parse_profile(mode);
+    let response = await eel.save_profile(JSON.stringify(parsed_profile))();
+
+    response = JSON.parse(response);
+    if(response.status === "saved") {
+        saving_spinner.innerHTML = "<div>Saved</div><div class=\"tick\"></div>";
+    }
+
+    else {
+        right_info_bar.removeChild(saving_spinner);
+
+        for (let message of response.messages) {
+            console.log(message);
+            let message_div = document.createElement('div');
+            message_div.className = "message";
+            message_div.innerHTML = `<p>${message}</p>`;
+            right_info_bar.appendChild(message_div);
+        }
+    }
+    console.log(response);
+}
