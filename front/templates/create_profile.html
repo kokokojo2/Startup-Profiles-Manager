@@ -1,23 +1,15 @@
 {% extends 'base.html' %}
-{% block head %}<link rel="stylesheet" href="../css/create_profile.css">{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="../css/create_profile.css">
+    <script src="../js/mid_level.js"></script>
+{% endblock %}
 {% block content %}
-<div class="right-popup">
-    <div class="message">
-        <div>Saving</div>
-        <div class="spinner"></div>
-    </div>
-    <div class="message">
-        <p>ⓘ priority has to be an integer</p>
-    </div>
-    <div class="message">
-        <p>ⓘ path should point on .exe or .lnk file</p>
-    </div>
-</div>
+<div class="right-popup"></div>
 <div class="center-container">
     <input type="text" class="profile-name-detail" placeholder="New profile name">
     <div class="checkbox-wrapper">
         <p>Launch each entry with a delay</p>
-        <input type="checkbox" name="">
+        <input type="checkbox" id="timeout_mode">
     </div>
     <table>
         <tr id="head">
@@ -33,7 +25,7 @@
         </tr>
     </table>
         <button id="add-entry">+</button>
-        <button id="save">Save</button>
+        <button id="save" onclick="save_profile('create');">Save</button>
 </div>
 {% endblock %}
 {% block scripts %}
@@ -41,6 +33,7 @@
     document.getElementById("add-entry").onclick = function () {
 
         let new_entry = document.createElement('tr');
+        new_entry.className = "profile-entry";
         let checkbox = document.querySelector("input[type=checkbox]");
         new_entry.innerHTML = "<td><input type=\"text\" class=\"table-cell\"></td>\n".repeat(2);
         new_entry.innerHTML += "<td><input type=\"text\" class=\"table-cell\" ondrop=\"dropHandler(event)\" placeholder=\"Drop .exe file or shortcut here.\"></td>";
@@ -61,7 +54,9 @@
 
         for (let row of table_rows) {
             if (row.id !== "head" && row.className !== "space1") {
-                row.appendChild(document.createElement('td'));
+                let td_timeout = document.createElement('td');
+                td_timeout.innerHTML = "<input type=\"text\" class=\"table-cell\">";
+                row.appendChild(td_timeout);
             }
         }
   } else {
