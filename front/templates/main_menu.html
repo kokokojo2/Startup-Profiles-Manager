@@ -26,7 +26,7 @@
 {% endblock %}
 {% block scripts %}
     <script>
-        load_profile_list();
+        load_profile_list("main_menu");
         setTimeout(function () {
             let profiles = document.getElementsByClassName("profile-container");
             for(let profile of profiles) {
