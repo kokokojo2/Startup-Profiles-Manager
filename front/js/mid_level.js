@@ -1,11 +1,14 @@
-async function load_profile_list() {
+async function load_profile_list(mode) {
     let profiles_obj = await eel.get_profile_list()();
     profiles_obj = JSON.parse(profiles_obj);
 
     let help_text = document.createElement('p');
 
     if (profiles_obj.status === "OK"){
-        help_text.innerHTML = "Please, choose a profile to launch.";
+        if (mode === "main_menu") {
+            help_text.innerHTML = "Please, choose a profile to launch.";
+
+        }
 
         profiles_obj = profiles_obj.data;
         let profiles_array = [];
@@ -127,27 +130,28 @@ function parse_profile(mode) {  // TODO: add id and disabled parsing for detail 
             entries: []
         }
     let entries = document.getElementsByClassName("profile-entry");
+        let disabled_parse = document.getElementsByClassName("option");
+        let i = 0;
     for (let entry of entries) {
         let entry_obj = {
             name: entry.children[0].children[0].value,
             priority: entry.children[1].children[0].value,
             executable_path: entry.children[2].children[0].value,
-            launch_time: 0,
+            launch_time: profile_obj.timeout_mode ? entry.children[3].children[0].value : 0,
+            id: mode === "create" ? null : entry.dataset.id,
         }
-        if (profile_obj.timeout_mode) {
-            entry_obj.launch_time = entry.children[3].children[0].value;
-        }
-
-        if (mode === "create") {
+        if (entry_obj.id === undefined) {
             entry_obj.id = null;
         }
 
+        if (mode !== "create") {
+            entry_obj.disabled = !disabled_parse[i].children[0].children[0].children[0].checked;
+            i++;
+        }
         profile_obj.entries.push(entry_obj);
     }
-    if (mode === "create") {
-            profile_obj.id = null;
-    }
 
+    profile_obj.id = mode === "create" ? null : document.getElementById("profile-id").dataset.id;
     console.log(profile_obj);
     return profile_obj;
 }
@@ -165,6 +169,15 @@ async function save_profile(mode) {
     response = JSON.parse(response);
     if(response.status === "saved") {
         saving_spinner.innerHTML = "<div>Saved</div><div class=\"tick\"></div>";
+
+        let entries = document.getElementsByClassName('profile-entry');
+        let i = 0;
+        for (let entry of entries) {
+            if (!entry.hasAttribute("data-id")) {
+                entry.setAttribute("data-id", response.new_entries_ids[i]);
+                i++;
+            }
+        }
     }
 
     else {
@@ -179,4 +192,133 @@ async function save_profile(mode) {
         }
     }
     console.log(response);
+}
+
+async function delete_profile(event) {
+    await eel.delete_profile(event.target.parentElement.dataset.id)();
+    event.target.parentElement.remove();
+}
+function add_remove_button() {
+    let profile_containers = document.getElementsByClassName("profile-container");
+    for (let container of profile_containers) {
+        let trash_button = document.createElement("img");
+        trash_button.setAttribute("src", "../resources/trash.png");
+        trash_button.setAttribute("alt", "delete");
+
+        trash_button.addEventListener("click", delete_profile);
+        container.appendChild(trash_button);
+    }
+}
+
+async function delete_entry(event) {
+
+}
+
+function add_row() {
+        let new_entry = document.createElement('tr');
+        new_entry.className = "profile-entry"
+        let checkbox = document.querySelector("input[type=checkbox]");
+        new_entry.innerHTML = "<td><input type=\"text\" class=\"table-cell\"></td>\n".repeat(2);
+        new_entry.innerHTML += "<td><input type=\"text\" class=\"table-cell\" ondrop=\"dropHandler(event)\" placeholder=\"Drop .exe file or shortcut here.\"></td>";
+
+        new_entry.innerHTML += checkbox.checked ? "<td><input type=\"text\" class=\"table-cell\"></td>" : "<td style='display: none;'><input type=\"text\" class=\"table-cell\"></td>"
+
+        let tables = document.getElementsByTagName('table');
+        tables[0].appendChild(new_entry);
+        let options_row = document.createElement('tr');
+        options_row.className = 'option';
+        options_row.innerHTML =  `<td style="padding-top: 3px"><div class="disable-checkbox"><input type="checkbox" checked></div></td>` +
+                                 "<td><div style='height: 20px;'><img style='top: 0; padding-top: 4px; position: relative;' src=\"../resources/trash.png\" alt=\"delete\" onclick=\"delete_entry(event);\"></div></td>";
+        tables[1].appendChild(options_row);
+}
+
+async function choose_profile_detail(event) {
+    let profile_info = await eel.get_profile_info(event.target.dataset.id)();
+    profile_info = JSON.parse(profile_info);
+    clear_page();
+
+    document.getElementById("contents").innerHTML = "" +
+        "<div class=\"right-popup\"></div>" +
+        `<div id='profile-id' style='display:none;' data-id='${profile_info.meta.id}'></div>` +
+        "<div class=\"center-container\">" +
+        `<input type=\"text\" class=\"profile-name-detail\" value=\"${profile_info.meta.name}\">` +
+        "<div class=\"checkbox-wrapper\">" +
+        "<p>Launch each entry with a delay</p>" +
+        `<input type=\"checkbox\" id='timeout_mode' ${profile_info.meta.timeout_mode ? "checked" : ""}>` +
+        "</div>" +
+        "<div class=\"table-wrapper\">" +
+        "<table style=\"width: 750px;\">" +
+        "<tr id=\"head\">" +
+        "<th style=\"width: 20%\">Name</th>" +
+        "<th style=\"width: 10%\">Priority</th>" +
+        "<th style=\"width: 60%\">Path to executable</th>" +
+        `${profile_info.meta.timeout_mode ? "<th style=\"width: 15%\">Timeout</th>" : "<th style=\"display: none;\">Timeout</th>"}` +
+        "</tr>" +
+        "<tr class=\"space1\"></tr>" +
+        "</table>" +
+        "<table class=\"options\">" +
+        "<tr>" +
+        "<th></th>" +
+        "<th></th>" +
+        "</tr>" +
+        "<tr class=\"space1\"></tr>" +
+        "</table>" +
+        "</div>" +
+        "<button id=\"add-entry\" style=\"width: 40%;\" onclick=\"add_row();\">+</button>" +
+        "<button id=\"save\" onclick=\"save_profile('update');\">Save</button>" +
+        "</div>"
+
+        document.querySelector("input[type=checkbox]").addEventListener("change", function () {
+            if (this.checked) {
+                document.getElementById("head").lastElementChild.setAttribute("style", "width: 15%");
+                let table_rows = document.getElementsByClassName("profile-entry");
+                for (let row of table_rows) {
+                    if (row.id !== "head" && row.className !== "space1") {
+                        row.lastElementChild.removeAttribute("style");
+                    }
+                }
+            } else {
+                let head_row = document.getElementById("head");
+                head_row.lastElementChild.setAttribute("style", "display: none;");
+
+                let table_rows = document.getElementsByClassName("profile-entry");
+                for (let row of table_rows) {
+                    if (row.id !== "head" && row.className !== "space1") {
+                        row.lastElementChild.setAttribute("style", "display: none;");
+                    }
+                }
+            }
+        });
+
+
+        let table = document.getElementsByTagName("table")[0];
+        let options_table = document.getElementsByTagName("table")[1];
+        if (profile_info.meta.timeout_mode) {
+                let head_row = document.getElementById("head");
+                head_row.setAttribute("style", "width: 15%;");
+            }
+
+        for (let entry of profile_info.entries) {
+            let table_row = document.createElement("tr");
+            table_row.className = "profile-entry";
+            table_row.setAttribute("data-id", entry.id);
+
+            table_row.innerHTML = `<td><input type=\"text\" class=\"table-cell\" value="${entry.name}"></td>` +
+                `<td><input type=\"text\" class=\"table-cell\" value="${entry.priority}"></td>` +
+                `<td><input type=\"text\" class=\"table-cell\" ondrop=\"dropHandler(event)\" value = "${entry.executable_path}" placeholder=\"Drop .exe file or shortcut here.\"></td>`;
+
+            if (profile_info.meta.timeout_mode) {
+                table_row.innerHTML += `<td><input type=\"text\" class=\"table-cell\" value="${entry.launch_time}"></td>`
+            }
+            else {
+                table_row.innerHTML += "<td style='display: none;'><input type=\"text\" class=\"table-cell\"></td>"
+            }
+            table.appendChild(table_row);
+            let options = document.createElement("tr");
+            options.className = "option";
+            options.innerHTML = `<td style="padding-top: 3px"><div class="disable-checkbox"><input type="checkbox" ${entry.disabled ? "" : "checked"}></div></td>` +
+                                 "<td><div style='height: 20px;'><img style='top: 0; padding-top: 4px; position: relative;' src=\"../resources/trash.png\" alt=\"delete\" onclick=\"delete_entry(event);\"></div></td>";
+
+            options_table.appendChild(options);
+        }
 }
