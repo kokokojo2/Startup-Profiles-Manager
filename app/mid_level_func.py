@@ -99,7 +99,6 @@ def save_profile(profile_json):
     logger.info('Performing validation and saving profile...')
     parsed_profile = json.loads(profile_json)
     validator = Validator()
-
     messages = {}
     valid_name = validator.bool_validate_name(parsed_profile['name'])
     if not valid_name[0]:
@@ -143,16 +142,25 @@ def save_profile(profile_json):
                 launch_time=entry_raw['validation']['valid_launch_time'][1],
                 executable_path=entry_raw['validation']['valid_exe'][1],
                 id=entry_raw['id'],
+                disabled=entry_raw['disabled']
             )
             pr.entries.append(entry)
 
         db_manager = DB()
-        db_manager.save_profile(pr)
+        new_ids = db_manager.save_profile(pr)
 
-        return json.dumps({'status': 'saved'})
+        return json.dumps({'status': 'saved', 'new_entries_ids': new_ids})
 
     json_serializable_messages = {'status': 'error', 'messages': []}
     for message in messages.values():
         json_serializable_messages['messages'].append('ⓘ ' + message)
 
     return json.dumps(json_serializable_messages)
+
+
+@eel.expose
+def delete_profile(profile_id):
+    logger.info('Calling delete profile function from js...')
+
+    db_manager = DB()
+    db_manager.delete_profile(db_manager.get_profile(profile_id))
