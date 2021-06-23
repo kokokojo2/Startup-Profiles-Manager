@@ -82,8 +82,19 @@ async function choose_profile(profile_info) {
 
 async function on_launch_profile(event) {
     let profile_info = await eel.get_profile_info(event.target.dataset.id)();
+    let settings = await  eel.get_settings()();
+    settings = JSON.parse(settings);
     profile_info = JSON.parse(profile_info);
     choose_profile(profile_info);
+
+    if (settings.close_after_launch) {
+        let action = document.createElement("div");
+        action.className = "action";
+        action.id = `close`
+
+        action.innerHTML = `<p>Close application</p>`;
+        document.getElementsByClassName("actions")[0].appendChild(action);
+    }
 
     for (let entry of profile_info.entries) {
         let spinner = document.createElement("div");
@@ -99,6 +110,22 @@ async function on_launch_profile(event) {
             await new Promise(r => setTimeout(r, entry.launch_time * 60 * 1000));
             timeout_spinner.className = "tick";
         }
+    }
+
+    let help_text = document.getElementById('close');
+    if (help_text) {
+        setTimeout(function(){
+            help_text.innerHTML = "Closing application in 3..";
+            setTimeout(function() {
+                help_text.innerHTML = "Closing application in 2..";
+                setTimeout(function(){
+                    help_text.innerHTML = "Closing application in 1..";
+                    setTimeout(function(){
+                        window.close();
+                            }, 1000);
+                    }, 1000);
+                }, 1000);
+        }, 1000);
     }
 }
 
@@ -123,7 +150,7 @@ async function update_settings() {
 
 }
 
-function parse_profile(mode) {  // TODO: add id and disabled parsing for detail page
+function parse_profile(mode) {
     let profile_obj = {
             name: document.getElementsByClassName("profile-name-detail")[0].value,
             timeout_mode: document.getElementById("timeout_mode").checked,
@@ -139,6 +166,7 @@ function parse_profile(mode) {  // TODO: add id and disabled parsing for detail 
             executable_path: entry.children[2].children[0].value,
             launch_time: profile_obj.timeout_mode ? entry.children[3].children[0].value : 0,
             id: mode === "create" ? null : entry.dataset.id,
+            disabled: false,
         }
         if (entry_obj.id === undefined) {
             entry_obj.id = null;
@@ -158,6 +186,10 @@ function parse_profile(mode) {  // TODO: add id and disabled parsing for detail 
 
 async function save_profile(mode) {
     let right_info_bar = document.getElementsByClassName("right-popup")[0];
+    while (right_info_bar.firstChild) {
+        right_info_bar.removeChild(right_info_bar.firstChild);
+        }
+
     let saving_spinner = document.createElement("div");
     saving_spinner.className = "message";
     saving_spinner.innerHTML = "<div>Saving</div><div class=\"spinner\"></div>";
@@ -168,8 +200,15 @@ async function save_profile(mode) {
 
     response = JSON.parse(response);
     if(response.status === "saved") {
-        saving_spinner.innerHTML = "<div>Saved</div><div class=\"tick\"></div>";
+        saving_spinner.innerHTML = "<div>Saved</div><div class=\"tick\" style='width: 10px; margin-top: -5px;'></div>";
 
+        if (mode === "create") {
+            clear_page();
+            let info_text = document.createElement('div');
+            info_text.className = "main-slogan";
+            info_text.innerHTML = "<p class=\"big\" style='font-size: 26px; padding-top: 150px;'>Profile successfully saved. Visit Profiles page to view it.</p>";
+            document.getElementById("contents").appendChild(info_text);
+        }
         let entries = document.getElementsByClassName('profile-entry');
         let i = 0;
         for (let entry of entries) {
@@ -182,9 +221,7 @@ async function save_profile(mode) {
 
     else {
         right_info_bar.removeChild(saving_spinner);
-
         for (let message of response.messages) {
-            console.log(message);
             let message_div = document.createElement('div');
             message_div.className = "message";
             message_div.innerHTML = `<p>${message}</p>`;
@@ -211,12 +248,19 @@ function add_remove_button() {
 }
 
 async function delete_entry(event) {
+    let options_container = event.target.parentElement.parentElement.parentElement;
+    let container = document.getElementById(`${options_container.id.split("-")[0]}-info`);
+    await eel.delete_entry(container.dataset.id)();
 
+    container.remove();
+    options_container.remove();
 }
 
 function add_row() {
         let new_entry = document.createElement('tr');
         new_entry.className = "profile-entry"
+        new_entry.id = `${get_next_rowid() + 1}-info`;
+
         let checkbox = document.querySelector("input[type=checkbox]");
         new_entry.innerHTML = "<td><input type=\"text\" class=\"table-cell\"></td>\n".repeat(2);
         new_entry.innerHTML += "<td><input type=\"text\" class=\"table-cell\" ondrop=\"dropHandler(event)\" placeholder=\"Drop .exe file or shortcut here.\"></td>";
@@ -226,6 +270,7 @@ function add_row() {
         let tables = document.getElementsByTagName('table');
         tables[0].appendChild(new_entry);
         let options_row = document.createElement('tr');
+        options_row.id = `${get_next_rowid()}-option`;
         options_row.className = 'option';
         options_row.innerHTML =  `<td style="padding-top: 3px"><div class="disable-checkbox"><input type="checkbox" checked></div></td>` +
                                  "<td><div style='height: 20px;'><img style='top: 0; padding-top: 4px; position: relative;' src=\"../resources/trash.png\" alt=\"delete\" onclick=\"delete_entry(event);\"></div></td>";
@@ -302,6 +347,7 @@ async function choose_profile_detail(event) {
             let table_row = document.createElement("tr");
             table_row.className = "profile-entry";
             table_row.setAttribute("data-id", entry.id);
+            table_row.id = `${get_next_rowid() + 1}-info`;
 
             table_row.innerHTML = `<td><input type=\"text\" class=\"table-cell\" value="${entry.name}"></td>` +
                 `<td><input type=\"text\" class=\"table-cell\" value="${entry.priority}"></td>` +
@@ -315,10 +361,15 @@ async function choose_profile_detail(event) {
             }
             table.appendChild(table_row);
             let options = document.createElement("tr");
+            options.id = `${get_next_rowid()}-option`;
             options.className = "option";
             options.innerHTML = `<td style="padding-top: 3px"><div class="disable-checkbox"><input type="checkbox" ${entry.disabled ? "" : "checked"}></div></td>` +
                                  "<td><div style='height: 20px;'><img style='top: 0; padding-top: 4px; position: relative;' src=\"../resources/trash.png\" alt=\"delete\" onclick=\"delete_entry(event);\"></div></td>";
 
             options_table.appendChild(options);
         }
+}
+
+function get_next_rowid() {
+    return document.getElementsByClassName("profile-entry").length;
 }
