@@ -164,3 +164,18 @@ def delete_profile(profile_id):
 
     db_manager = DB()
     db_manager.delete_profile(db_manager.get_profile(profile_id))
+
+
+@eel.expose
+def delete_entry(profile_entry_id):
+    if profile_entry_id is None:
+        return
+
+    db_manager = DB()
+    db_manager.delete_profile_entry_id(profile_entry_id)
+
+
+@eel.expose
+def get_settings():
+    settings_manager = SettingsManager()
+    return json.dumps({'close_after_launch': settings_manager.get_settings().close_after_launch})
