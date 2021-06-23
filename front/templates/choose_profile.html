@@ -1,50 +1,39 @@
 {% extends 'base.html' %}
-{% block head %}<link rel="stylesheet" href="../css/choose_profile.css">{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="../css/choose_profile.css">
+    <script src="../js/mid_level.js"></script>
+    <link rel="stylesheet" href="../css/create_profile.css">
+{% endblock %}
 {% block content %}
 <div class="main-slogan">
-    <p>Please, choose a profile.</p> <!-- TODO: Capture stuff if no profiles-->
+    <p>Please, choose a profile.</p>
 </div>
-<div class="profile-tiles">
-<div class="row">
-        <div class="profile-container">
-            <a><p class="profile-name">Work</p></a>
-            <p class="apps-counter">7 apps</p>
-            <img src="../resources/trash.png" alt="delete">
-        </div>
-        <div class="profile-container">
-            <a><p class="profile-name">Gamer</p></a>
-            <p class="apps-counter">3 apps</p>
-            <img src="../resources/trash.png" alt="delete">
-        </div>
-        <div class="profile-container">
-            <a><p class="profile-name">Beautiful home</p></a>
-            <p class="apps-counter">4 apps</p>
-            <img src="../resources/trash.png" alt="delete">
-        </div>
-        <div class="profile-container">
-            <a><p class="profile-name">CAD</p></a>
-            <p class="apps-counter">10 apps</p>
-            <img src="../resources/trash.png" alt="delete">
-        </div>
-    </div>
-    <div class="row">
-        <div class="profile-container">
-            <a><p class="profile-name">Surfing net</p></a>
-            <p class="apps-counter">2 apps</p>
-            <img src="../resources/trash.png" alt="delete">
-        </div>
-        <div class="profile-container">
-            <a><p class="profile-name">C++ developing</p></a>
-            <p class="apps-counter">3 apps</p>
-            <img src="../resources/trash.png" alt="delete">
-        </div>
-        <div class="profile-container">
-            <a><p class="profile-name">Fast meeting</p></a>
-            <p class="apps-counter">4 apps</p>
-            <img src="../resources/trash.png" alt="delete">
-        </div>
-    </div>
-</div>
+<div class="profile-tiles"></div>
 {% endblock %}
 {% block scripts %}
+<script>
+    load_profile_list();
+    setTimeout(function () {
+                add_remove_button();
+        }, 500);
+    setTimeout(function () {
+        let profiles = document.getElementsByClassName("profile-container");
+        console.log(profiles);
+        for(let profile of profiles) {
+            profile.addEventListener("click", choose_profile_detail);
+        }
+    }, 500);
+</script>
+<script>
+    function dropHandler(ev) {
+        ev.preventDefault();
+
+        if (ev.dataTransfer.items) {
+              if (ev.dataTransfer.items[0].kind === 'file') {
+                  let file = ev.dataTransfer.items[0].getAsFile();
+                  ev.target.value = file.path;
+              }
+        }
+    }
+</script>
 {% endblock %}
