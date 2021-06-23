@@ -247,6 +247,18 @@ class DB:
         self.connection.commit()
         self.close_connection()
 
+    def delete_profile_entry_id(self, profile_entry_id):
+        """
+        Deletes given profile entry.
+        :param profile_entry_id: id of profile entry in database
+        :return:
+        """
+        self.logger.info(f'Deleting entry {profile_entry_id} from database.')
+        self.get_cursor()
+        self.cursor.execute('DELETE FROM ProfileEntries WHERE entry_id = ?', (profile_entry_id,))
+        self.connection.commit()
+        self.close_connection()
+
     def delete_profile(self, profile_object):
         """
         Deletes a row in ProfileMeta with profile_object.id and all associated profile entries.
