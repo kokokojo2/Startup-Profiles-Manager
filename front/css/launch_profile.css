@@ -23,34 +23,3 @@
 .action{
     display: flex;
 }
-
-.tick {
-    position: relative;
-    display: inline-block;
-    width: 15px;
-    height: 15px;
-}
-
-.tick::before {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    height: 50%;
-    width: 3px;
-    background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59);
-    content: "";
-    transform: translateX(10px) rotate(-45deg);
-    transform-origin: left bottom;
-}
-
-.tick::after {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    height: 3px;
-    width: 100%;
-    background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59);
-    content: "";
-    transform: translateX(10px) rotate(-45deg);
-    transform-origin: left bottom;
-}
