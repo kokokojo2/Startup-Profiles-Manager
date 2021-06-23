@@ -109,8 +109,9 @@ class DB:
         Serializes profile obj with all entries and metadata to a database.
         Assumes that id field marks whether profile exists in a database or not.
         :param profile_object: Profile instance
-        :return:
+        :return: list of ids of new entries
         """
+        new_entries_id = []
         self.get_cursor()
         if profile_object.id is not None:
             self.logger.info(f'Updating profile with name - {profile_object.name} and id - {profile_object.id}.')
@@ -128,10 +129,13 @@ class DB:
                 self.logger.info(
                     f'Saving profile entry with name - {entry.name}, id - {entry.id} of {profile_object.name} profile.')
                 self.save_profile_entry(entry, profile_object)
+                new_entries_id.append(self.cursor.lastrowid)
 
         self.connection.commit()
         self.logger.info(f'Profile with name - {profile_object.name} is successfully saved.')
         self.close_connection()
+
+        return new_entries_id
 
     def save_profile_metadata(self, profile_object):
         """
