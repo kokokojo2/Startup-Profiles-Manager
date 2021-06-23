@@ -16,12 +16,14 @@
             <th style="width: 20%">Name</th>
             <th style="width: 10%">Priority</th>
             <th style="width: 60%">Path to executable</th>
+            <th style="background-color: transparent; width: 5%;"></th>
         </tr>
         <tr class="space1"></tr>
         <tr class="profile-entry">
             <td><input type="text" class="table-cell"></td>
             <td><input type="text" class="table-cell"></td>
             <td><input type="text" class="table-cell" ondrop="dropHandler(event)" placeholder="Drop .exe file or shortcut here."></td>
+            <td style="background-color: transparent; width: 10px;"><img src="../resources/trash.png" onclick="delete_entry(event)"></td>
         </tr>
     </table>
         <button id="add-entry">+</button>
@@ -40,6 +42,7 @@
 
         new_entry.innerHTML += checkbox.checked ? "<td><input type=\"text\" class=\"table-cell\"></td>" : ""
 
+        new_entry.innerHTML += "<td style=\"background-color: transparent; width: 10px;\"><img src=\"../resources/trash.png\" onclick='delete_entry(event)'></td>";
         let table = document.getElementsByTagName('table')[0];
         table.appendChild(new_entry);
     }
