@@ -9,14 +9,18 @@
     {% block head %}{% endblock %}
 </head>
 <body>
-<nav>
-    <ul>
-        <li><a href="main_menu.html" id="0" onclick="update_page_id(0)"><span>Home</span></a></li>
-        <li><a href="create_profile.html" id="1" onclick="update_page_id(1)"><span>Create profile</span></a></li>
-        <li><a href="choose_profile.html" id="4" onclick="update_page_id(4)"><span>Profiles</span></a></li>
-        <li><a href="about.html" id="6" onclick="update_page_id(6)"><span>About</span></a></li>
-    </ul>
-</nav>
+<div id="draggable"></div>
+<div style="display: flex; justify-content: space-between">
+    <nav>
+        <ul>
+            <li><a href="main_menu.html" id="0" onclick="update_page_id(0)"><span>Home</span></a></li>
+            <li><a href="create_profile.html" id="1" onclick="update_page_id(1)"><span>Create profile</span></a></li>
+            <li><a href="choose_profile.html" id="4" onclick="update_page_id(4)"><span>Profiles</span></a></li>
+            <li><a href="about.html" id="6" onclick="update_page_id(6)"><span>About</span></a></li>
+        </ul>
+    </nav>
+    <div id="close-button" onclick="window.close();"></div>
+</div>
 <div id="contents">
     {% block content %}{% endblock %}
 </div>
