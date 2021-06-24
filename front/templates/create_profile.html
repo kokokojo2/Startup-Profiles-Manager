@@ -16,14 +16,16 @@
             <th style="width: 20%">Name</th>
             <th style="width: 10%">Priority</th>
             <th style="width: 60%">Path to executable</th>
-            <th style="background-color: transparent; width: 5%;"></th>
+            <th style="display: none;"  class="timeout-cell head">Timeout</th>
+            <th style="background-color: transparent;"></th>
         </tr>
         <tr class="space1"></tr>
         <tr class="profile-entry">
             <td><input type="text" class="table-cell"></td>
             <td><input type="text" class="table-cell"></td>
             <td><input type="text" class="table-cell" ondrop="dropHandler(event)" placeholder="Drop .exe file or shortcut here."></td>
-            <td style="background-color: transparent; width: 10px;"><img src="../resources/trash.png" onclick="delete_entry(event)"></td>
+            <td style="display: none;" class="timeout-cell"><input type="text" class="table-cell"></td>
+            <td style="background-color: transparent; width: 10px;"><img src="../resources/trash.png" onclick="remove_row(event)"></td>
         </tr>
     </table>
         <button id="add-entry">+</button>
@@ -40,9 +42,9 @@
         new_entry.innerHTML = "<td><input type=\"text\" class=\"table-cell\"></td>\n".repeat(2);
         new_entry.innerHTML += "<td><input type=\"text\" class=\"table-cell\" ondrop=\"dropHandler(event)\" placeholder=\"Drop .exe file or shortcut here.\"></td>";
 
-        new_entry.innerHTML += checkbox.checked ? "<td><input type=\"text\" class=\"table-cell\"></td>" : ""
+        new_entry.innerHTML += checkbox.checked ? "<td class=\"timeout-cell\"><input type=\"text\" class=\"table-cell\"></td>" : "<td style=\"display: none;\" class=\"timeout-cell\"><input type=\"text\" class=\"table-cell\"></td>"
 
-        new_entry.innerHTML += "<td style=\"background-color: transparent; width: 10px;\"><img src=\"../resources/trash.png\" onclick='delete_entry(event)'></td>";
+        new_entry.innerHTML += "<td style=\"background-color: transparent; width: 10px;\"><img src=\"../resources/trash.png\" onclick='remove_row(event)'></td>";
         let table = document.getElementsByTagName('table')[0];
         table.appendChild(new_entry);
     }
@@ -51,29 +53,20 @@
     let checkbox = document.querySelector("input[type=checkbox]");
 
     checkbox.addEventListener('change', function() {
-    if (this.checked) {
-        document.getElementById('head').innerHTML += "<th style=\"width: 15%\">Timeout</th>";
-        let table_rows = document.getElementsByTagName('tr');
-
-        for (let row of table_rows) {
-            if (row.id !== "head" && row.className !== "space1") {
-                let td_timeout = document.createElement('td');
-                td_timeout.innerHTML = "<input type=\"text\" class=\"table-cell\">";
-                row.appendChild(td_timeout);
+        let timeout_rows = document.getElementsByClassName('timeout-cell');
+        if (this.checked) {
+            for (let row of timeout_rows) {
+                if (row.className === "timeout-cell head") {
+                    row.setAttribute('style', 'width: 15%');
+                } else {
+                    row.removeAttribute('style');
+                }
+            }
+        } else {
+            for (let row of timeout_rows) {
+                row.setAttribute('style', 'display: none;');
             }
         }
-  } else {
-        let head_row = document.getElementById('head');
-        head_row.removeChild(head_row.lastChild);
-        let table_rows = document.getElementsByTagName('tr');
-
-        for (let row of table_rows) {
-            if (row.id !== "head" && row.className !== "space1") {
-                console.log(row.lastChild, 'a')
-                row.removeChild(row.lastChild);
-            }
-        }
-  }
 });
 </script>
 <script>
@@ -86,6 +79,11 @@
                   ev.target.value = file.path;
               }
         }
+    }
+</script>
+<script>
+    function remove_row(ev) {
+        ev.target.parentElement.parentElement.remove();
     }
 </script>
 {% endblock %}
