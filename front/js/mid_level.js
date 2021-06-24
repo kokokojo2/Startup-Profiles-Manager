@@ -103,7 +103,7 @@ async function on_launch_profile(event) {
 
         await new Promise(r => setTimeout(r, 500));
         spinner.className = "tick";
-        if (profile_info.meta.timeout_mode) {
+        if (profile_info.meta.timeout_mode && profile_info.entries[profile_info.entries.length - 1] !== entry) {
             let timeout_spinner = document.createElement("div");
             timeout_spinner.className = "spinner";
             document.getElementById(`entry-${entry.id}`).nextSibling.appendChild(timeout_spinner);
@@ -114,6 +114,7 @@ async function on_launch_profile(event) {
 
     let help_text = document.getElementById('close');
     if (help_text) {
+        console.log('here...')
         setTimeout(function(){
             help_text.innerHTML = "Closing application in 3..";
             setTimeout(function() {
@@ -206,7 +207,7 @@ async function save_profile(mode) {
             clear_page();
             let info_text = document.createElement('div');
             info_text.className = "main-slogan";
-            info_text.innerHTML = "<p class=\"big\" style='font-size: 26px; padding-top: 150px;'>Profile successfully saved. Visit Profiles page to view it.</p>";
+            info_text.innerHTML = "<p class=\"big\" style='font-size: 26px; padding-top: 150px;'>Profile is successfully saved. Visit Profiles page to view it.</p>";
             document.getElementById("contents").appendChild(info_text);
         }
         let entries = document.getElementsByClassName('profile-entry');
