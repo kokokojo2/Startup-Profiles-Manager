@@ -14,6 +14,19 @@ from base.data_classes import Profile, ProfileEntry, Settings
 
 # singleton class
 class DB:
+    logger = logging.getLogger(config.DB_LOGGER_NAME)
+    log_file = logging.FileHandler(config.MAIN_LOG_PATH)
+    error_stream = logging.StreamHandler()
+
+    log_file.setLevel(logging.INFO)
+    log_file.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_FILE))
+
+    error_stream.setLevel(logging.WARNING)
+    error_stream.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_CONSOLE))
+    logger.addHandler(log_file)
+    logger.addHandler(error_stream)
+    logger.setLevel(logging.DEBUG)
+
     def __new__(cls):
         if not hasattr(cls, 'instance'):
             cls.instance = super(DB, cls).__new__(cls)
@@ -24,21 +37,6 @@ class DB:
         self.db_name = config.DATABASE_FULL_PATH
         self.connection = None
         self.cursor = None
-
-        self.logger = logging.getLogger(config.DB_LOGGER_NAME)
-        log_file = logging.FileHandler(config.MAIN_LOG_PATH)
-        error_stream = logging.StreamHandler()
-
-        log_file.setLevel(logging.INFO)
-        log_file.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_FILE))
-
-        error_stream.setLevel(logging.WARNING)
-        error_stream.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_CONSOLE))
-
-        self.logger.addHandler(log_file)
-        self.logger.addHandler(error_stream)
-
-        self.logger.setLevel(logging.DEBUG)
 
     def connect(self):
         # TODO: add an try-except block
@@ -340,27 +338,26 @@ class SettingsManager:
     This class encapsulates functions that manage user settings of an app.
     """
 
+    logger = logging.getLogger(config.SETTINGS_LOGGER_NAME)
+    log_file = logging.FileHandler(config.MAIN_LOG_PATH)
+    error_stream = logging.StreamHandler()
+
+    log_file.setLevel(logging.INFO)
+    log_file.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_FILE))
+
+    error_stream.setLevel(logging.WARNING)
+    error_stream.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_CONSOLE))
+
+    logger.addHandler(log_file)
+    logger.addHandler(error_stream)
+
+    logger.setLevel(logging.DEBUG)
+
     def __new__(cls):
         if not hasattr(cls, 'instance'):
             cls.instance = super(SettingsManager, cls).__new__(cls)
 
         return cls.instance
-
-    def __init__(self):
-        self.logger = logging.getLogger(config.SETTINGS_LOGGER_NAME)
-        log_file = logging.FileHandler(config.MAIN_LOG_PATH)
-        error_stream = logging.StreamHandler()
-
-        log_file.setLevel(logging.INFO)
-        log_file.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_FILE))
-
-        error_stream.setLevel(logging.WARNING)
-        error_stream.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_CONSOLE))
-
-        self.logger.addHandler(log_file)
-        self.logger.addHandler(error_stream)
-
-        self.logger.setLevel(logging.DEBUG)
 
     def satisfy_and_save(self, new_setting_obj):
         """
@@ -476,28 +473,28 @@ class SettingsManager:
 
 # a singleton class
 class StartupManager:
+    """
+    This class encapsulates functions that handle launch operations with profiles.
+    """
+    logger = logging.getLogger(config.STARTUP_LOGGER_NAME)
+    log_file = logging.FileHandler(config.MAIN_LOG_PATH)
+    error_stream = logging.StreamHandler()
+
+    log_file.setLevel(logging.INFO)
+    log_file.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_FILE))
+
+    error_stream.setLevel(logging.WARNING)
+    error_stream.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_CONSOLE))
+
+    logger.addHandler(log_file)
+    logger.addHandler(error_stream)
+    logger.setLevel(logging.DEBUG)
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
             cls.instance = super(StartupManager, cls).__new__(cls)
 
         return cls.instance
-
-    def __init__(self):
-        self.logger = logging.getLogger(config.STARTUP_LOGGER_NAME)
-        log_file = logging.FileHandler(config.MAIN_LOG_PATH)
-        error_stream = logging.StreamHandler()
-
-        log_file.setLevel(logging.INFO)
-        log_file.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_FILE))
-
-        error_stream.setLevel(logging.WARNING)
-        error_stream.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_CONSOLE))
-
-        self.logger.addHandler(log_file)
-        self.logger.addHandler(error_stream)
-
-        self.logger.setLevel(logging.DEBUG)
 
     def run_executable_from_path(self, profile_entry):
         """
