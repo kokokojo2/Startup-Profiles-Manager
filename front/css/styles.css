@@ -160,8 +160,8 @@ input:checked[type="checkbox"]:before{
 
 .right-popup{
     position: absolute;
-    top: 20px;
-    right: 45px;
+    top: 50px;
+    right: 20px;
 
     font-family: "Mont Regular", serif;
     font-size: 13px;
@@ -206,4 +206,56 @@ a{
     content: "";
     transform: translateX(10px) rotate(-45deg);
     transform-origin: left bottom;
+}
+
+#navigation {
+    padding-top: 20px;
+    margin-right: 20px;
+    font-family: "Mont SemiBold", serif;
+    -webkit-app-region: drag;
+    -webkit-user-select: none;
+
+}
+
+#navigation span{
+        cursor: grab;
+
+}
+#close-button {
+    cursor: pointer;
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59);
+    border-radius: 50px;
+
+}
+
+#close-button::before, #close-button::after {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    width: 5px;
+    height: 15px;
+    background: #32323e;
+}
+
+#close-button::before {
+    transform: rotate(-45deg);
+}
+
+#close-button::after {
+    transform: rotate(45deg);
+}
+
+#draggable {
+    position: absolute;
+    width: 350px;
+    height: 40px;
+    left: 500px;
+    -webkit-app-region: drag;
+    -webkit-user-select: none;
 }
