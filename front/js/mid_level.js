@@ -3,11 +3,15 @@ async function load_profile_list(mode) {
     profiles_obj = JSON.parse(profiles_obj);
 
     let help_text = document.createElement('p');
-
+    let big = document.createElement('p');
+    big.className = "big";
+    big.innerHTML = "Hi, there!";
     if (profiles_obj.status === "OK"){
         if (mode === "main_menu") {
             help_text.innerHTML = "Please, choose a profile to launch.";
 
+        } else {
+            help_text.innerHTML = "Please, choose a profile to view and edit.";
         }
 
         profiles_obj = profiles_obj.data;
@@ -33,8 +37,15 @@ async function load_profile_list(mode) {
             }
         }
     } else {
-        help_text.innerHTML = "You do not have any profiles to launch. Please, create one first.";
+        help_text.innerHTML = "Please, create some profiles first.";
+        if (mode === "main_menu") {
+            big.innerHTML = "You do not have any profiles to launch.";
+        } else {
+            big.innerHTML = "You do not have any profiles to edit.";
+        }
+        big.setAttribute('style', 'padding-top: 100px;')
     }
+    document.getElementsByClassName("main-slogan")[0].appendChild(big);
     document.getElementsByClassName("main-slogan")[0].appendChild(help_text);
 }
 
@@ -207,7 +218,7 @@ async function save_profile(mode) {
             clear_page();
             let info_text = document.createElement('div');
             info_text.className = "main-slogan";
-            info_text.innerHTML = "<p class=\"big\" style='font-size: 26px; padding-top: 150px;'>Profile is successfully saved. Visit Profiles page to view it.</p>";
+            info_text.innerHTML = "<p class=\"big\" style='font-size: 26px; padding-top: 140px;'>Profile is successfully saved. Visit Profiles page to view it.</p>";
             document.getElementById("contents").appendChild(info_text);
         }
         let entries = document.getElementsByClassName('profile-entry');
