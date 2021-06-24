@@ -126,7 +126,7 @@ input:checked[type="checkbox"]:before{
 }
 
 .main-slogan{
-    padding-top: 100px;
+    padding-top: 150px;
     text-align: center;
 
     font-family: "Mont Regular", serif;
@@ -259,3 +259,4 @@ a{
     -webkit-app-region: drag;
     -webkit-user-select: none;
 }
+
