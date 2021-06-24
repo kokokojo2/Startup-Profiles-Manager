@@ -1,4 +1,5 @@
 const {app, BrowserWindow} = require('electron')
+const path = require('path');
 
 let mainWindow
 
@@ -7,14 +8,14 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 900,
     height: 650,
-    webPreferences: {
-      nodeIntegration: true
-    },
+    frame: false,
     resizable: false
   });
-  mainWindow.removeMenu()
-  mainWindow.loadURL('http://localhost:8000/main_menu.html');
+  //mainWindow.removeMenu()
+  mainWindow.loadURL('http://localhost:8000/templates/main_menu.html');
 }
+
+
 
 app.on('ready', createWindow)
 app.on('window-all-closed', function () {
