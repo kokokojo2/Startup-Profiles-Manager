@@ -178,4 +178,6 @@ def delete_entry(profile_entry_id):
 @eel.expose
 def get_settings():
     settings_manager = SettingsManager()
-    return json.dumps({'close_after_launch': settings_manager.get_settings().close_after_launch})
+    settings = settings_manager.get_settings()
+    return json.dumps({'close_after_launch': settings.close_after_launch,
+                       'start_with_windows': settings.enable_startup})
