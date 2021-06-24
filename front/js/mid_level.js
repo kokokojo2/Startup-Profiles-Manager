@@ -373,3 +373,15 @@ async function choose_profile_detail(event) {
 function get_next_rowid() {
     return document.getElementsByClassName("profile-entry").length;
 }
+
+
+async function load_settings() {
+    let settings = JSON.parse(await eel.get_settings()());
+    if (settings.close_after_launch) {
+        document.getElementById("close-after-launch").setAttribute("checked", "");
+    }
+    if (settings.start_with_windows) {
+        document.getElementById("start-with-windows").setAttribute("checked", "");
+    }
+
+}
