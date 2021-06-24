@@ -91,7 +91,7 @@ input:checked[type="checkbox"]:before{
 
 }
 .profile-container{
-    width: 192px;
+    width: 187px;
     height: 106px;
     position: relative;
 
@@ -123,6 +123,9 @@ input:checked[type="checkbox"]:before{
     position: absolute;
     padding: 0 15px;
     bottom: 25px;
+    height: 300px;
+    width: 828px;
+    overflow: auto;
 }
 
 .main-slogan{
@@ -258,5 +261,23 @@ a{
     left: 500px;
     -webkit-app-region: drag;
     -webkit-user-select: none;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #272730;
+    border-radius: 50px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #454555;
+    border-radius: 50px;
 }
 
