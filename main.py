@@ -3,6 +3,8 @@ import os
 import eel
 
 from base.before_imports_check import check
+
+os.chdir(config.APPLICATION_ROOT)
 check()  # make lazy initialization of loggers instead of this
 from base.service import IntegrityChecker
 import app.mid_level_func
