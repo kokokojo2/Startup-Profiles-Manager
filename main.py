@@ -1,6 +1,12 @@
+import config
+import os
 import eel
-import app.mid_level_func
+
+from base.before_imports_check import check
+check()  # make lazy initialization of loggers instead of this
 from base.service import IntegrityChecker
+import app.mid_level_func
+
 
 if __name__ == '__main__':
     checker = IntegrityChecker()
