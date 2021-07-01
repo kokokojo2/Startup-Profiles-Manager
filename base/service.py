@@ -10,29 +10,25 @@ class IntegrityChecker:
     """
     This method performs a check whether a required program files exist and repair them if not.
     """
+    logger = logging.getLogger(config.INT_CHECKER_LOGGER_NAME)
+    log_file = logging.FileHandler(config.MAIN_LOG_PATH)
+    error_stream = logging.StreamHandler()
+
+    log_file.setLevel(logging.INFO)
+    log_file.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_FILE))
+
+    error_stream.setLevel(logging.WARNING)
+    error_stream.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_CONSOLE))
+
+    logger.addHandler(log_file)
+    logger.addHandler(error_stream)
+    logger.setLevel(logging.DEBUG)
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
             cls.instance = super(IntegrityChecker, cls).__new__(cls)
 
         return cls.instance
-
-    def __init__(self):
-        self.logger = logging.getLogger(config.INT_CHECKER_LOGGER_NAME)
-        self.check_log_folder_existence()
-        log_file = logging.FileHandler(config.MAIN_LOG_PATH)
-        error_stream = logging.StreamHandler()
-
-        log_file.setLevel(logging.INFO)
-        log_file.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_FILE))
-
-        error_stream.setLevel(logging.WARNING)
-        error_stream.setFormatter(logging.Formatter(config.MESSAGE_FORMAT_TO_CONSOLE))
-
-        self.logger.addHandler(log_file)
-        self.logger.addHandler(error_stream)
-
-        self.logger.setLevel(logging.DEBUG)
 
     def check_db_existence(self):
         db_manager = DB()
@@ -45,12 +41,6 @@ class IntegrityChecker:
                 self.logger.info('Data folder exist, but database does not.')
             db_manager.create_default_structure()
             self.logger.info('Database file with default structure created successfully.')
-
-    def check_log_folder_existence(self):
-        self.logger.info('Checking for logs folder existence.')
-        if not os.path.exists(config.LOGS_DIR):
-            os.makedirs(config.LOGS_DIR)
-        self.logger.info('Done.')
 
     def check_settings_existence(self):
         self.logger.info('Checking for settings existence.')
@@ -67,6 +57,6 @@ class IntegrityChecker:
         """
 
         # do not change an order of method calls. They are dependent on each other.
-        self.check_log_folder_existence()
         self.check_db_existence()
         self.check_settings_existence()
+
