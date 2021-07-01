@@ -106,7 +106,7 @@ async function on_launch_profile(event) {
         action.innerHTML = `<p>Close application</p>`;
         document.getElementsByClassName("actions")[0].appendChild(action);
     }
-
+    profile_info.entries = profile_info.entries.filter(entry => !entry.disabled);
     for (let entry of profile_info.entries) {
         let spinner = document.createElement("div");
         spinner.className = "spinner";
