@@ -3,8 +3,8 @@ import sys
 
 
 # directory configuration
-APPLICATION_ROOT = os.path.dirname(os.path.realpath(__file__))
-EXECUTABLE_FULL_PATH = os.path.join(APPLICATION_ROOT, 'main.py')
+APPLICATION_ROOT = os.path.join(os.path.expanduser('~'), 'AppData', 'Roaming', 'Startup Manager')
+EXECUTABLE_FULL_PATH = sys.executable
 LOGS_DIR = os.path.join(APPLICATION_ROOT, 'logfiles')
 
 # logging configuration
