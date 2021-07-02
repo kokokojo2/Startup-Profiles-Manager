@@ -20,7 +20,7 @@ So far, this application allows user to:
 ## System requirements
 * OS - Windows (tested on Windows 10, some functions may not work on earlier versions)
 ## Installation
-If you need a build executable that can run without dependencies installation, please see this tag. Also, you can check out other branches that store script itself (without UI) and source code of an executable file.
+If you need a build executable that can run without dependencies installation, please see this [tag](https://github.com/kokokojo2/Startup-Profiles-Manager/releases/tag/v1.2). Also, you can check out other branches that store script itself (without UI) and source code of an executable file.
 ### Installation process
 Before following these steps, please check if you machine has installed node.js. If it is not installed, you can download it [here](https://nodejs.org/en/download/).  
 Clone this branch of a repo:
