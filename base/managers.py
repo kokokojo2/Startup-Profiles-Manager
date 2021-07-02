@@ -387,6 +387,7 @@ class SettingsManager:
         link = shell.CreateShortCut(folder_path)
         # TODO: check after build
         link.Targetpath = config.EXECUTABLE_FULL_PATH
+        link.WorkingDirectory = os.path.dirname(config.EXECUTABLE_FULL_PATH)
         link.save()
 
     def remove_startup_shortcut(self):
