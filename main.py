@@ -1,5 +1,3 @@
-import config
-import os
 import eel
 
 from base.before_imports_check import check
