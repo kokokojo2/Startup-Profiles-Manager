@@ -19,9 +19,12 @@ So far, this application allows user to:
 ## System requirements
 * OS - Windows (tested on Windows 10, some functions may not work on earlier versions)
 ## Installation
+If you need a build executable that can run without dependencies installation, please see this tag. Also, you can check out other branches that store script itself (without UI) and source code of an executable file.
+### Installation process
+After following these steps please check if you machine has installed nodejs. If it is not installed, you can download it [here](https://nodejs.org/en/download/).
 Clone this branch of a repo:
 ```
-git clone -b console_script https://github.com/kokokojo2/Startup-Profiles-Manager
+git clone -b master https://github.com/kokokojo2/Startup-Profiles-Manager
 cd Startup-Profiles-Manager
 ```
 Make and activate virtual environment:
@@ -33,8 +36,11 @@ Install needed requirements:
 ```
 pip install -r requirements.txt
 ```
-Launch the script:
+Install electron locally for this project:
+```
+npm install electron --save-dev
+```
+Launch the app:
 ```
 python main.py
-```
-If you need version that is packed into executable or application with nice UI based on this script, please see other branches or tags. 
+``` 
