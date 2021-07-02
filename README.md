@@ -16,6 +16,7 @@ So far, this application allows user to:
 * configure things like priority of launching, timeout after launch of each application independently for every profile
 * configure script to start with Windows OS and close itself after launch of a profile
 ## Work examples
+![](https://imgur.com/3gkzd4r.gif)
 ## System requirements
 * OS - Windows (tested on Windows 10, some functions may not work on earlier versions)
 ## Installation
