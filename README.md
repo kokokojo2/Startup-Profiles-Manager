@@ -22,7 +22,7 @@ So far, this application allows user to:
 ## Installation
 If you need a build executable that can run without dependencies installation, please see this tag. Also, you can check out other branches that store script itself (without UI) and source code of an executable file.
 ### Installation process
-Before following these steps, please check if you machine has installed nodejs. If it is not installed, you can download it [here](https://nodejs.org/en/download/).  
+Before following these steps, please check if you machine has installed node.js. If it is not installed, you can download it [here](https://nodejs.org/en/download/).  
 Clone this branch of a repo:
 ```
 git clone -b master https://github.com/kokokojo2/Startup-Profiles-Manager
